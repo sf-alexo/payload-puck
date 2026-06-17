@@ -1,107 +1,67 @@
-# Technical Specification
-## Project: Payload + Next.js + Puck Editor Proof-of-Concept
+# Payload Blank Template
 
-## 1. Overview
-This project is a proof-of-concept (PoC) demonstrating a modern headless CMS architecture using:
-- **Payload CMS** (content backend)
-- **Next.js** (frontend rendering layer)
-- **Puck** (visual page builder/editor)
-- **Optional:** MCP (Model Context Protocol) for AI-assisted content operations
+This template comes configured with the bare minimum to get started on anything you need.
 
-### Problem Statement: Current Content Editing Challenges
-The current content editing experience on the existing platform is a major bottleneck for editors. The workflow is overly complex and involves too many steps and clicks to complete even simple tasks.
+## Quick start
 
-### Goal
-Validate the editor experience and content modeling workflow, specifically:
-- Visual page building (Puck)
-- Structured content management (Payload)
-- Reusable component system
-- Preview and rendering flow
-- (Phase 2) AI-assisted content generation via MCP
+This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
 
-## 2. Scope
-### In Scope
-- Next.js application (frontend + preview)
-- Payload CMS backend
-- Puck editor integration
+## Quick Start - local setup
 
-## 3. Content
-### Reusable UI Components
-- Hero with Image
-- CTA section
-- Rich Text block
+To spin up this template locally, follow these steps:
 
-### Content Models
-- Case Studies
-- Testimonials
+### Clone
 
-### Additional Capabilities
-- Page rendering pipeline
-- Admin/editor experience
+After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
 
-## 4. Local Development Setup (AI-Ready / One-Click Demo Environment)
-The repository should support a low-friction local setup and demo experience for non-technical users. It should include step-by-step instructions that allow Claude to help run and troubleshoot the project locally.
+### Development
 
-## 5. Architecture
-### High-Level Architecture
-```
-Puck Editor
-   ↓
-Next.js App
-   ↓
-Payload CMS API
-   ↓
-Database (SQLite / Postgres)
-```
+1. First [clone the repo](#clone) if you have not done so already
+2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
 
-### Optional AI Layer
-```
-AI Assistant
-   ↓ (MCP)
-Payload CMS API
-   ↓
-Content + Pages
-```
+3. `pnpm install && pnpm dev` to install dependencies and start the dev server
+4. open `http://localhost:3000` to open the app in your browser
 
-## 6. MCP (AI Layer) – Phase 2
-### Purpose
-Enable AI to interact with the CMS through controlled, structured operations.
+That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
 
-### Capabilities
-The AI assistant should support natural language instructions such as:
+#### Docker (Optional)
 
-#### Basic tasks
-- "Create a landing page with a hero, text section, and gallery"
-- "Rewrite and improve this text field"
-- "Change widget type or layout"
-#### Advanced
-- "Take this Google Doc URL and create case studies from the provided information"
-- "Extract all testimonials from WordPress case studies and sort them alphabetically"
-- "Take this image, insert it into Team page and generate the funny caption"
+If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
 
-### Constraints
-- The AI must only operate on content within Payload CMS
-- The AI must not modify application code, system configuration, or infrastructure
-- All operations must use structured CMS APIs (via MCP tools)
+To do so, follow these steps:
 
-## 7. Success Criteria
-The PoC is successful if:
+- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
+- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
+- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
 
-### Core Editor Experience
-- A user can create a page visually using Puck
-- The page is stored in Payload
-- The page renders correctly in Next.js
-- Components are reusable and consistent
+## How it works
 
-### Content Modeling
-- A user can create a new case study entry (including tags, images, testimonials)
-- A user can create testimonials and link them to case studies
+The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
 
-### Optional Future Extension
-- AI can generate or modify content via MCP
+### Collections
 
-## 8. Estimated Effort
-- **Core PoC:** 8–16 hours
-- **Enhanced PoC (polish + preview):** 16–24 hours
-- **With MCP AI layer:** Will be estimated after validating the editor experience
+See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
 
+- #### Users (Authentication)
+
+  Users are auth-enabled collections that have access to the admin panel.
+
+  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/3.x/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
+
+- #### Media
+
+  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
+
+### Docker
+
+Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
+
+1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
+1. Next run `docker-compose up`
+1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
+
+That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
+
+## Questions
+
+If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
