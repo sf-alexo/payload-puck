@@ -176,6 +176,18 @@ export interface Page {
   title: string;
   slug: string;
   status?: ('draft' | 'published') | null;
+  /**
+   * Visual page layout produced by the Puck editor. Edit at /edit/{slug}.
+   */
+  layout?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -347,6 +359,7 @@ export interface PagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   status?: T;
+  layout?: T;
   updatedAt?: T;
   createdAt?: T;
 }

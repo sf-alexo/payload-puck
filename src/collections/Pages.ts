@@ -30,5 +30,12 @@ export const Pages: CollectionConfig = {
         { label: 'Published', value: 'published' },
       ],
     },
+    {
+      name: 'layout',
+      type: 'json',
+      admin: {
+        description: 'Visual page layout produced by the Puck editor. Edit at /edit/{slug}.',
+      },
+    },
   ],
 }
