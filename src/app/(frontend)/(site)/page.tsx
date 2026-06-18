@@ -1,58 +1,39 @@
-import { headers as getHeaders } from 'next/headers.js'
-import Image from 'next/image'
 import { getPayload } from 'payload'
+import { Render } from '@puckeditor/core/rsc'
+import '@puckeditor/core/puck.css'
 import React from 'react'
-import { fileURLToPath } from 'url'
 
 import config from '@/payload.config'
+import { puckConfig, type PuckData } from '@/puck/puck.config'
 
 export default async function HomePage() {
-  const headers = await getHeaders()
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
-  const { user } = await payload.auth({ headers })
+  const payload = await getPayload({ config: await config })
 
-  const fileURL = `vscode://file/${fileURLToPath(import.meta.url)}`
+  // The home page is the protected page with the reserved slug "home".
+  const result = await payload.find({
+    collection: 'pages',
+    where: { slug: { equals: 'home' } },
+    limit: 1,
+  })
+
+  const page = result.docs[0]
+  const data = (page?.layout as PuckData | null | undefined) ?? undefined
+
+  if (!data || !Array.isArray(data.content) || data.content.length === 0) {
+    return (
+      <div style={{ padding: 48, fontFamily: 'sans-serif', background: '#fff', color: '#0b1120' }}>
+        <h1>{page?.title ?? 'Home'}</h1>
+        <p>
+          The home page has no layout yet. Build one in the Puck editor at{' '}
+          <code>/edit/home</code>.
+        </p>
+      </div>
+    )
+  }
 
   return (
-    <div className="home">
-      <div className="content">
-        <picture>
-          <source srcSet="https://raw.githubusercontent.com/payloadcms/payload/3.x/packages/ui/src/assets/payload-favicon.svg" />
-          <Image
-            alt="Payload Logo"
-            height={65}
-            src="https://raw.githubusercontent.com/payloadcms/payload/3.x/packages/ui/src/assets/payload-favicon.svg"
-            width={65}
-          />
-        </picture>
-        {!user && <h1>Welcome to your new project.</h1>}
-        {user && <h1>Welcome back, {user.email}</h1>}
-        <div className="links">
-          <a
-            className="admin"
-            href={payloadConfig.routes.admin}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Go to admin panel
-          </a>
-          <a
-            className="docs"
-            href="https://payloadcms.com/docs"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Documentation
-          </a>
-        </div>
-      </div>
-      <div className="footer">
-        <p>Update this page by editing</p>
-        <a className="codeLink" href={fileURL}>
-          <code>app/(frontend)/page.tsx</code>
-        </a>
-      </div>
+    <div style={{ background: '#fff', color: '#0b1120', minHeight: '100vh' }}>
+      <Render config={puckConfig} data={data} />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { getPayload } from 'payload'
 import { Render } from '@puckeditor/core/rsc'
 import '@puckeditor/core/puck.css'
@@ -9,6 +9,12 @@ import { puckConfig, type PuckData } from '@/puck/puck.config'
 
 export default async function PublicPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
+
+  // The home page is served at "/", so avoid duplicate content at "/home".
+  if (slug === 'home') {
+    redirect('/')
+  }
+
   const payload = await getPayload({ config: await config })
 
   const result = await payload.find({

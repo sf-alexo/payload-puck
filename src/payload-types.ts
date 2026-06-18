@@ -180,6 +180,9 @@ export interface Media {
 export interface Page {
   id: number;
   title: string;
+  /**
+   * URL path segment. The home page uses the reserved slug "home" and cannot be changed or deleted.
+   */
   slug: string;
   status?: ('draft' | 'published') | null;
   /**

@@ -28,6 +28,25 @@ export default buildConfig({
   },
   collections: [Users, Media, Pages, CaseStudies, Testimonials],
   globals: [Header, Footer],
+  onInit: async (payload) => {
+    // Ensure a protected, editable home page always exists (slug "home").
+    const existing = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: 'home' } },
+      limit: 1,
+    })
+    if (existing.docs.length === 0) {
+      await payload.create({
+        collection: 'pages',
+        data: {
+          title: 'Home',
+          slug: 'home',
+          status: 'published',
+          layout: { content: [], root: {} },
+        },
+      })
+    }
+  },
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

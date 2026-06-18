@@ -12,6 +12,19 @@ export const Pages: CollectionConfig = {
   },
   access: {
     read: () => true,
+    // Prevent deletion of the protected home page (slug "home").
+    delete: () => ({ slug: { not_equals: 'home' } }),
+  },
+  hooks: {
+    beforeChange: [
+      ({ data, originalDoc }) => {
+        // The home page slug is locked and cannot be renamed.
+        if (originalDoc?.slug === 'home') {
+          data.slug = 'home'
+        }
+        return data
+      },
+    ],
   },
   fields: [
     {
@@ -25,6 +38,9 @@ export const Pages: CollectionConfig = {
       required: true,
       unique: true,
       index: true,
+      admin: {
+        description: 'URL path segment. The home page uses the reserved slug "home" and cannot be changed or deleted.',
+      },
     },
     {
       name: 'status',
