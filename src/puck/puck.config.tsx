@@ -63,7 +63,7 @@ export const puckConfig: Config<Components> = {
       label: 'Hero with Image',
       fields: {
         title: { type: 'text', label: 'Title' },
-        subtitle: { type: 'textarea', label: 'Subtitle' },
+        subtitle: { type: 'richtext', label: 'Subtitle' },
         imageId: {
           type: 'custom',
           render: (props) => <MediaField {...props} />,
@@ -98,9 +98,9 @@ export const puckConfig: Config<Components> = {
         >
           <h1 style={{ fontSize: '2.5rem', margin: 0, maxWidth: 760 }}>{title}</h1>
           {subtitle && (
-            <p style={{ fontSize: '1.15rem', opacity: 0.8, margin: 0, maxWidth: 640 }}>
+            <div style={{ fontSize: '1.15rem', opacity: 0.8, margin: 0, maxWidth: 640 }}>
               {subtitle}
-            </p>
+            </div>
           )}
           {imageId && (
             // eslint-disable-next-line @next/next/no-img-element
@@ -157,7 +157,7 @@ export const puckConfig: Config<Components> = {
     RichText: {
       label: 'Rich Text',
       fields: {
-        content: { type: 'textarea', label: 'Content' },
+        content: { type: 'richtext', label: 'Content' },
       },
       defaultProps: {
         content: 'Write your paragraph content here.',
@@ -170,7 +170,6 @@ export const puckConfig: Config<Components> = {
             padding: '32px 24px',
             fontSize: '1.05rem',
             lineHeight: 1.7,
-            whiteSpace: 'pre-wrap',
           }}
         >
           {content}
@@ -184,7 +183,7 @@ export const puckConfig: Config<Components> = {
           type: 'array',
           arrayFields: {
             title: { type: 'text', label: 'Title' },
-            description: { type: 'textarea', label: 'Description' },
+            description: { type: 'richtext', label: 'Description' },
             imageId: {
               type: 'custom',
               render: (props) => <MediaField {...props} />,
@@ -233,7 +232,9 @@ export const puckConfig: Config<Components> = {
                 )}
                 <h3 style={{ margin: '0 0 8px 0', fontSize: '1.25rem' }}>{slide.title}</h3>
                 {slide.description && (
-                  <p style={{ margin: 0, opacity: 0.8, fontSize: '0.95rem' }}>{slide.description}</p>
+                  <div style={{ margin: 0, opacity: 0.8, fontSize: '0.95rem' }}>
+                    {slide.description}
+                  </div>
                 )}
               </div>
             ))}

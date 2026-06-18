@@ -28,6 +28,13 @@ export default function EditorClient({ pageId, pageTitle, initialData }: EditorC
 
   return (
     <div style={{ height: '100vh' }}>
+      <style>{`
+        /* Make drawer item names always visible */
+        [class*="DrawerItem-name"] {
+          color: #0b1120 !important;
+          opacity: 1 !important;
+        }
+      `}</style>
       <div
         style={{
           display: 'flex',
