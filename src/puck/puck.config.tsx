@@ -1,5 +1,5 @@
 import React from 'react'
-import type { Config } from '@puckeditor/core'
+import type { Config, Data } from '@puckeditor/core'
 
 export type HeroProps = {
   title: string
@@ -23,6 +23,8 @@ type Components = {
   CTA: CTAProps
   RichText: RichTextProps
 }
+
+export type PuckData = Data<Components>
 
 export const puckConfig: Config<Components> = {
   components: {

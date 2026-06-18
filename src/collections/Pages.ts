@@ -4,6 +4,11 @@ export const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
     useAsTitle: 'title',
+    components: {
+      edit: {
+        beforeDocumentControls: ['@/components/EditInPuckButton#EditInPuckButton'],
+      },
+    },
   },
   access: {
     read: () => true,
