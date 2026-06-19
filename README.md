@@ -1,67 +1,147 @@
-# Payload Blank Template
+# SNF Payload POC
 
-This template comes configured with the bare minimum to get started on anything you need.
+A Payload CMS 3.0 project with Puck editor integration for visual page building. This project uses SQLite for local development and includes a rich set of components for creating dynamic web pages.
 
-## Quick start
+## Features
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+- **Payload CMS 3.0** - Headless CMS with admin panel
+- **Puck Editor** - Visual page builder with drag-and-drop components
+- **SQLite Database** - Local file-based database for easy development
+- **Rich Text Editing** - Tiptap-based rich text with formatting support
+- **Media Management** - Image upload and library selection
+- **Swiper Carousel** - Responsive carousel with navigation and pagination
+- **Authentication** - User authentication with admin panel access
+- **Edit/View Buttons** - Quick navigation between editor and published pages for logged-in users
 
-## Quick Start - local setup
+## Prerequisites
 
-To spin up this template locally, follow these steps:
+- **Node.js** v18 or higher
+- **pnpm** package manager
 
-### Clone
+## Quick Start
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+For detailed setup instructions, refer to [`.claude/setup.md`](.claude/setup.md) which provides step-by-step guidance for Claude agents.
 
-### Development
+### 1. Install Dependencies
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+```bash
+pnpm install
+```
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+### 2. Set Up Environment
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+Copy the example environment file:
 
-#### Docker (Optional)
+```bash
+cp .env.example .env
+```
 
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
+The `.env` file should contain:
+```
+DATABASE_URL=file:./snf-payload-poc.db
+PAYLOAD_SECRET=<any-random-string>
+```
 
-To do so, follow these steps:
+Generate a random `PAYLOAD_SECRET`:
+- **macOS/Linux:** `openssl rand -base64 32`
+- **Windows (PowerShell):** `-join ((48..57) + (65..90) + (97..122) | Get-Random -Count 32 | % {[char]$_})`
 
-- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
+### 3. Create Media Folder
 
-## How it works
+```bash
+mkdir -p media
+```
 
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
+### 4. Start Development Server
 
-### Collections
+```bash
+pnpm dev
+```
 
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
+The server will start at **http://localhost:3000**
 
-- #### Users (Authentication)
+## Access Points
 
-  Users are auth-enabled collections that have access to the admin panel.
+- **Admin Panel:** http://localhost:3000/admin
+- **Public Site:** http://localhost:3000
+- **Page Editor:** http://localhost:3000/edit/{slug} (e.g., /edit/home for homepage)
 
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/3.x/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
+## Puck Editor Guide
 
-- #### Media
+### Creating Pages
 
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
+1. **Create a page in Admin Panel:**
+   - Go to http://localhost:3000/admin
+   - Navigate to "Pages" collection
+   - Create a new page with a title and slug (e.g., "about" for /about)
 
-### Docker
+2. **Edit page with Puck:**
+   - Visit http://localhost:3000/edit/{slug}
+   - Drag components from the left sidebar onto the canvas
+   - Configure component properties in the right panel
+   - Click "Publish" to save changes
 
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
+3. **View published page:**
+   - Visit http://localhost:3000/{slug} (or / for homepage)
+   - If logged in, you'll see "Admin Panel" and "Edit Page" buttons in the top-right corner
 
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
+### Available Components
 
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
+- **Hero with Image:** Title, subtitle (rich text), image, alignment
+- **CTA Section:** Heading, button label, button URL
+- **Rich Text:** Full rich text content with formatting
+- **Carousel:** Slides with title, description (rich text), and images (uses Swiper)
+- **Progress Bars:** Title and progress items with labels and values
+- **Table:** Headers array and rows with comma-separated cell values
+
+### Media Handling
+
+- Upload images directly in the MediaField component
+- Or select from existing media library via the "Library" button
+- Images are stored in the Payload media collection
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── (frontend)/
+│   │   ├── (site)/          # Public pages
+│   │   │   ├── page.tsx     # Homepage
+│   │   │   └── [slug]/      # Dynamic pages
+│   │   └── edit/[slug]/     # Puck editor
+│   ├── api/                 # API routes
+│   └── admin/               # Admin panel
+├── collections/             # Payload collections
+│   ├── Users.ts
+│   ├── Media.ts
+│   ├── Pages.ts
+│   ├── CaseStudies.ts
+│   └── Testimonials.ts
+├── components/              # React components
+├── puck/
+│   ├── puck.config.tsx      # Puck editor configuration
+│   ├── fields/              # Custom Puck fields
+│   └── components/         # Puck components
+└── payload.config.ts        # Payload configuration
+```
+
+## Build for Production
+
+```bash
+pnpm build
+```
+
+```bash
+pnpm start
+```
+
+## Notes
+
+- The SQLite database file (`snf-payload-poc.db`) is created automatically on first run
+- The database and `media` folder are gitignored (do not commit them)
+- To stop the development server, press `Ctrl+C` in the terminal
 
 ## Questions
 
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+If you have any issues or questions, reach out to the Payload team on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
