@@ -1,6 +1,7 @@
 import React from 'react'
 import type { Config, Data } from '@puckeditor/core'
 import MediaField from './fields/MediaField'
+import CarouselComponent from './components/Carousel'
 
 export type HeroProps = {
   title: string
@@ -199,48 +200,7 @@ export const puckConfig: Config<Components> = {
           { title: 'Slide 3', description: 'Third slide description' },
         ],
       },
-      render: ({ slides }) => (
-        <section style={{ padding: '48px 24px', background: '#0b1120' }}>
-          <div
-            style={{
-              display: 'flex',
-              overflowX: 'auto',
-              gap: 24,
-              padding: '0 24px',
-              scrollSnapType: 'x mandatory',
-            }}
-          >
-            {slides.map((slide, index) => (
-              <div
-                key={index}
-                style={{
-                  flex: '0 0 300px',
-                  scrollSnapAlign: 'start',
-                  background: '#1e293b',
-                  borderRadius: 12,
-                  padding: 24,
-                  color: '#fff',
-                }}
-              >
-                {(slide.imageUrl || slide.imageId) && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={slide.imageUrl || `/api/media/${slide.imageId}`}
-                    alt={slide.title}
-                    style={{ width: '100%', height: 180, objectFit: 'cover', borderRadius: 8, marginBottom: 16 }}
-                  />
-                )}
-                <h3 style={{ margin: '0 0 8px 0', fontSize: '1.25rem' }}>{slide.title}</h3>
-                {slide.description && (
-                  <div style={{ margin: 0, opacity: 0.8, fontSize: '0.95rem' }}>
-                    {slide.description}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
-      ),
+      render: ({ slides }) => <CarouselComponent slides={slides} />,
     },
     Bars: {
       label: 'Progress Bars',
