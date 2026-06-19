@@ -135,6 +135,7 @@ export default async function EditPage({ params }: { params: Promise<{ slug: str
     <EditorClient
       pageId={String(page.id)}
       pageTitle={page.title}
+      slug={slug}
       initialData={resolvedData}
     />
   )

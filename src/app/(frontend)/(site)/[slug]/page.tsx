@@ -1,4 +1,5 @@
 import { notFound, redirect } from 'next/navigation'
+import { headers as getHeaders } from 'next/headers.js'
 import { getPayload } from 'payload'
 import { Render } from '@puckeditor/core/rsc'
 import '@puckeditor/core/puck.css'
@@ -121,6 +122,8 @@ export default async function PublicPage({ params }: { params: Promise<{ slug: s
   }
 
   const payload = await getPayload({ config: await config })
+  const headers = await getHeaders()
+  const { user } = await payload.auth({ headers })
 
   const result = await payload.find({
     collection: 'pages',
@@ -155,6 +158,56 @@ export default async function PublicPage({ params }: { params: Promise<{ slug: s
 
   return (
     <div style={{ background: '#fff', color: '#0b1120', minHeight: '100vh' }}>
+      {user && (
+        <div style={{ position: 'fixed', top: 16, right: 16, zIndex: 1000, display: 'flex', gap: 8 }}>
+          <a
+            href="/admin"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '10px 20px',
+              background: '#1e293b',
+              color: '#fff',
+              textDecoration: 'none',
+              borderRadius: 8,
+              fontSize: '0.9rem',
+              fontWeight: 500,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            }}
+            className="admin-button"
+          >
+            Admin Panel
+          </a>
+          <a
+            href={`/edit/${slug}`}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '10px 20px',
+              background: '#0b1120',
+              color: '#fff',
+              textDecoration: 'none',
+              borderRadius: 8,
+              fontSize: '0.9rem',
+              fontWeight: 500,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            }}
+            className="edit-button"
+          >
+            Edit Page
+          </a>
+          <style>{`
+            .admin-button:hover {
+              background: #334155;
+            }
+            .edit-button:hover {
+              background: #1e293b;
+            }
+          `}</style>
+        </div>
+      )}
       <Render config={puckConfig} data={resolvedData} />
     </div>
   )

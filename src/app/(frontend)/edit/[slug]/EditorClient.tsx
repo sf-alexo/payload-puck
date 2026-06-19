@@ -9,10 +9,11 @@ import { savePageLayout } from './actions'
 type EditorClientProps = {
   pageId: string
   pageTitle: string
+  slug: string
   initialData: Data
 }
 
-export default function EditorClient({ pageId, pageTitle, initialData }: EditorClientProps) {
+export default function EditorClient({ pageId, pageTitle, slug, initialData }: EditorClientProps) {
   const [status, setStatus] = useState<string>('')
 
   const handlePublish = async (data: Data) => {
@@ -25,6 +26,8 @@ export default function EditorClient({ pageId, pageTitle, initialData }: EditorC
       setStatus(`Error: ${(err as Error).message}`)
     }
   }
+
+  const viewUrl = slug === 'home' ? '/' : `/${slug}`
 
   return (
     <div style={{ height: '100vh' }}>
@@ -49,8 +52,32 @@ export default function EditorClient({ pageId, pageTitle, initialData }: EditorC
         <span>
           Editing: <strong>{pageTitle}</strong>
         </span>
-        {status && <span>{status}</span>}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          {status && <span>{status}</span>}
+          <a
+            href={viewUrl}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '6px 16px',
+              background: '#1e293b',
+              color: '#fff',
+              textDecoration: 'none',
+              borderRadius: 6,
+              fontSize: '0.85rem',
+              fontWeight: 500,
+            }}
+            className="view-page-button"
+          >
+            View Page
+          </a>
+        </div>
       </div>
+      <style>{`
+        .view-page-button:hover {
+          background: #334155;
+        }
+      `}</style>
       <Puck config={puckConfig} data={initialData} onPublish={handlePublish} />
     </div>
   )

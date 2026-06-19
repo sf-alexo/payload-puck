@@ -43,7 +43,7 @@ export type BarsProps = {
 }
 
 export type TableProps = {
-  headers: string
+  headers: { header: string }[]
   rows: { cells: string }[]
 }
 
@@ -262,26 +262,29 @@ export const puckConfig: Config<Components> = {
       label: 'Table',
       fields: {
         headers: {
-          type: 'textarea',
-          label: 'Headers (comma-separated)',
+          type: 'array',
+          arrayFields: {
+            header: { type: 'text', label: 'Header' },
+          },
+          label: 'Headers',
         },
         rows: {
           type: 'array',
           arrayFields: {
-            cells: { type: 'textarea', label: 'Row cells (comma-separated)' },
+            cells: { type: 'text', label: 'Row cells (comma-separated)' },
           },
           label: 'Rows',
         },
       },
       defaultProps: {
-        headers: 'Column 1,Column 2,Column 3',
+        headers: [{ header: 'Column 1' }, { header: 'Column 2' }, { header: 'Column 3' }],
         rows: [
           { cells: 'Row 1, Cell 1,Row 1, Cell 2,Row 1, Cell 3' },
           { cells: 'Row 2, Cell 1,Row 2, Cell 2,Row 2, Cell 3' },
         ],
       },
       render: ({ headers, rows }) => {
-        const headerArray = headers.split(',').map(h => h.trim())
+        const headerArray = headers.map((h: any) => h.header)
         return (
           <section style={{ padding: '48px 24px' }}>
             <div style={{ maxWidth: 800, margin: '0 auto', overflowX: 'auto' }}>
@@ -297,7 +300,7 @@ export const puckConfig: Config<Components> = {
               >
                 <thead>
                   <tr style={{ background: '#f1f5f9' }}>
-                    {headerArray.map((header, index) => (
+                    {headerArray.map((header: string, index: number) => (
                       <th
                         key={index}
                         style={{
