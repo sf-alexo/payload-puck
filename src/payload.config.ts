@@ -10,6 +10,9 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { CaseStudies } from './collections/CaseStudies'
 import { Testimonials } from './collections/Testimonials'
+import { ProjectTypes } from './collections/ProjectTypes'
+import { Industries } from './collections/Industries'
+import { Techstacks } from './collections/Techstacks'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 
@@ -26,7 +29,16 @@ export default buildConfig({
       actions: ['@/components/LogoutButton#LogoutButton'],
     },
   },
-  collections: [Users, Media, Pages, CaseStudies, Testimonials],
+  collections: [
+    Users,
+    Media,
+    Pages,
+    CaseStudies,
+    Testimonials,
+    ProjectTypes,
+    Industries,
+    Techstacks,
+  ],
   globals: [Header, Footer],
   onInit: async (payload) => {
     // Ensure a protected, editable home page always exists (slug "home").
@@ -53,6 +65,7 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: sqliteAdapter({
+    push: false,
     client: {
       url: process.env.DATABASE_URL || '',
     },

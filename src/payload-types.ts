@@ -72,6 +72,9 @@ export interface Config {
     pages: Page;
     'case-studies': CaseStudy;
     testimonials: Testimonial;
+    'project-types': ProjectType;
+    industries: Industry;
+    techstacks: Techstack;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -84,6 +87,9 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     'case-studies': CaseStudiesSelect<false> | CaseStudiesSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
+    'project-types': ProjectTypesSelect<false> | ProjectTypesSelect<true>;
+    industries: IndustriesSelect<false> | IndustriesSelect<true>;
+    techstacks: TechstacksSelect<false> | TechstacksSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -215,8 +221,44 @@ export interface CaseStudy {
         id?: string | null;
       }[]
     | null;
+  projectTypes?: (number | ProjectType)[] | null;
+  industries?: (number | Industry)[] | null;
+  techstacks?: (number | Techstack)[] | null;
   coverImage?: (number | null) | Media;
   testimonials?: (number | Testimonial)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "project-types".
+ */
+export interface ProjectType {
+  id: number;
+  name: string;
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "industries".
+ */
+export interface Industry {
+  id: number;
+  name: string;
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "techstacks".
+ */
+export interface Techstack {
+  id: number;
+  name: string;
+  slug?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -277,6 +319,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'testimonials';
         value: number | Testimonial;
+      } | null)
+    | ({
+        relationTo: 'project-types';
+        value: number | ProjectType;
+      } | null)
+    | ({
+        relationTo: 'industries';
+        value: number | Industry;
+      } | null)
+    | ({
+        relationTo: 'techstacks';
+        value: number | Techstack;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -386,6 +440,9 @@ export interface CaseStudiesSelect<T extends boolean = true> {
         tag?: T;
         id?: T;
       };
+  projectTypes?: T;
+  industries?: T;
+  techstacks?: T;
   coverImage?: T;
   testimonials?: T;
   updatedAt?: T;
@@ -401,6 +458,36 @@ export interface TestimonialsSelect<T extends boolean = true> {
   role?: T;
   company?: T;
   avatar?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "project-types_select".
+ */
+export interface ProjectTypesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "industries_select".
+ */
+export interface IndustriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "techstacks_select".
+ */
+export interface TechstacksSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }

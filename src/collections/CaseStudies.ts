@@ -42,6 +42,24 @@ export const CaseStudies: CollectionConfig = {
       ],
     },
     {
+      name: 'projectTypes',
+      type: 'relationship',
+      relationTo: 'project-types',
+      hasMany: true,
+    },
+    {
+      name: 'industries',
+      type: 'relationship',
+      relationTo: 'industries',
+      hasMany: true,
+    },
+    {
+      name: 'techstacks',
+      type: 'relationship',
+      relationTo: 'techstacks',
+      hasMany: true,
+    },
+    {
       name: 'coverImage',
       type: 'upload',
       relationTo: 'media',

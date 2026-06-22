@@ -117,7 +117,11 @@ src/
 │   ├── Media.ts
 │   ├── Pages.ts
 │   ├── CaseStudies.ts
-│   └── Testimonials.ts
+│   ├── Testimonials.ts
+│   ├── ProjectTypes.ts      # Category: Project Types
+│   ├── Industries.ts        # Category: Industries
+│   └── Techstacks.ts        # Category: Techstacks
+├── migrations/              # Payload database migrations
 ├── components/              # React components
 ├── puck/
 │   ├── puck.config.tsx      # Puck editor configuration
@@ -125,6 +129,25 @@ src/
 │   └── components/         # Puck components
 └── payload.config.ts        # Payload configuration
 ```
+
+## Database Migrations
+
+This project uses Payload's **migrations** workflow. Drizzle auto-`push` is disabled in `src/payload.config.ts` (`push: false`), so schema changes are applied through migration files rather than mutating the database on startup.
+
+After changing any collection, global, or field:
+
+```bash
+# Generate a migration from your schema changes
+pnpm payload migrate:create <descriptive-name>
+
+# Apply pending migrations
+pnpm payload migrate
+
+# Check which migrations have run
+pnpm payload migrate:status
+```
+
+Migration files live in `src/migrations/` and are committed to the repo. Do **not** delete the SQLite database to apply schema changes — use migrations instead.
 
 ## Build for Production
 

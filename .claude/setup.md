@@ -71,6 +71,31 @@ The server will start at **http://localhost:3000**.
 
 The first user created in the admin panel will be the admin user.
 
+## Database Migrations
+
+This project uses Payload's **migrations** workflow (Drizzle `push` is disabled in `src/payload.config.ts` via `push: false`). After changing any collection, global, or field, generate and run a migration instead of relying on auto-push.
+
+### Create a migration after schema changes
+```bash
+pnpm payload migrate:create <descriptive-name>
+```
+This writes a new migration file to `src/migrations/`.
+
+### Apply pending migrations
+```bash
+pnpm payload migrate
+```
+
+### Check migration status
+```bash
+pnpm payload migrate:status
+```
+
+### Notes
+- Do **not** delete the SQLite database to apply schema changes — use migrations.
+- Migration files in `src/migrations/` are committed to the repo.
+- If you ever see an error like `index ... already exists` on startup, it means push was attempting to mutate the schema. Ensure `push: false` is set and use the migration commands above.
+
 ## Puck Editor Guide
 
 ### Creating and Editing Pages
