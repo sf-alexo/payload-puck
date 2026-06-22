@@ -37,48 +37,45 @@ export default function EditorClient({ pageId, pageTitle, slug, initialData }: E
           color: #0b1120 !important;
           opacity: 1 !important;
         }
-      `}</style>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '8px 16px',
-          background: '#0b1120',
-          color: '#fff',
-          fontSize: '0.9rem',
-        }}
-      >
-        <span>
-          Editing: <strong>{pageTitle}</strong>
-        </span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          {status && <span>{status}</span>}
-          <a
-            href={viewUrl}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              padding: '6px 16px',
-              background: '#1e293b',
-              color: '#fff',
-              textDecoration: 'none',
-              borderRadius: 6,
-              fontSize: '0.85rem',
-              fontWeight: 500,
-            }}
-            className="view-page-button"
-          >
-            View Page
-          </a>
-        </div>
-      </div>
-      <style>{`
         .view-page-button:hover {
           background: #334155;
         }
       `}</style>
-      <Puck config={puckConfig} data={initialData} onPublish={handlePublish} />
+      <Puck
+        config={puckConfig}
+        data={initialData}
+        onPublish={handlePublish}
+        headerTitle={`Editing: ${pageTitle}`}
+        overrides={{
+          headerActions: ({ children }) => (
+            <>
+              <a
+                href={viewUrl}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  padding: '6px 16px',
+                  background: '#1e293b',
+                  color: '#fff',
+                  textDecoration: 'none',
+                  borderRadius: 6,
+                  fontSize: '0.85rem',
+                  fontWeight: 500,
+                }}
+                className="view-page-button"
+              >
+                View Page
+              </a>
+              {status && (
+                <span style={{ display: 'inline-flex', alignItems: 'center', fontSize: '0.85rem' }}>
+                  {status}
+                </span>
+              )}
+              {children}
+            </>
+          ),
+        }}
+      />
     </div>
   )
 }
