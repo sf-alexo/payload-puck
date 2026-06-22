@@ -32,10 +32,29 @@ export default function EditorClient({ pageId, pageTitle, slug, initialData }: E
   return (
     <div style={{ height: '100vh' }}>
       <style>{`
-        /* Make drawer item names always visible */
+        /* Make drawer item names always visible and wrap long labels */
         [class*="DrawerItem-name"] {
           color: #0b1120 !important;
           opacity: 1 !important;
+          font-size: 0.8rem !important;
+          white-space: normal !important;
+          overflow-wrap: anywhere !important;
+          word-break: break-word !important;
+          line-height: 1.1 !important;
+        }
+        /* Arrange drawer (Blocks) items in a 2-column grid */
+        [class*="Drawer_"] {
+          display: grid !important;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+          gap: 8px !important;
+        }
+        /* Make each drawer item smaller and prevent overflow */
+        [class*="DrawerItem_"] {
+          min-width: 0 !important;
+        }
+        [class*="DrawerItem-draggable"] {
+          padding: 8px !important;
+          min-width: 0 !important;
         }
         .view-page-button:hover {
           background: #334155;
