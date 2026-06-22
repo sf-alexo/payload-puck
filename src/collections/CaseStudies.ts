@@ -4,6 +4,11 @@ export const CaseStudies: CollectionConfig = {
   slug: 'case-studies',
   admin: {
     useAsTitle: 'title',
+    components: {
+      edit: {
+        beforeDocumentControls: ['@/components/admin/ViewCaseStudyButton'],
+      },
+    },
   },
   access: {
     read: () => true,
