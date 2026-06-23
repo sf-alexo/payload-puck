@@ -215,12 +215,6 @@ export interface CaseStudy {
   title: string;
   slug: string;
   summary?: string | null;
-  tags?:
-    | {
-        tag: string;
-        id?: string | null;
-      }[]
-    | null;
   projectTypes?: (number | ProjectType)[] | null;
   industries?: (number | Industry)[] | null;
   techstacks?: (number | Techstack)[] | null;
@@ -236,7 +230,6 @@ export interface CaseStudy {
 export interface ProjectType {
   id: number;
   name: string;
-  slug?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -247,7 +240,6 @@ export interface ProjectType {
 export interface Industry {
   id: number;
   name: string;
-  slug?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -258,7 +250,6 @@ export interface Industry {
 export interface Techstack {
   id: number;
   name: string;
-  slug?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -434,12 +425,6 @@ export interface CaseStudiesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   summary?: T;
-  tags?:
-    | T
-    | {
-        tag?: T;
-        id?: T;
-      };
   projectTypes?: T;
   industries?: T;
   techstacks?: T;
@@ -467,7 +452,6 @@ export interface TestimonialsSelect<T extends boolean = true> {
  */
 export interface ProjectTypesSelect<T extends boolean = true> {
   name?: T;
-  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -477,7 +461,6 @@ export interface ProjectTypesSelect<T extends boolean = true> {
  */
 export interface IndustriesSelect<T extends boolean = true> {
   name?: T;
-  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -487,7 +470,6 @@ export interface IndustriesSelect<T extends boolean = true> {
  */
 export interface TechstacksSelect<T extends boolean = true> {
   name?: T;
-  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }

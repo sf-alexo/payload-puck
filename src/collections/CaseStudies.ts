@@ -4,6 +4,7 @@ export const CaseStudies: CollectionConfig = {
   slug: 'case-studies',
   admin: {
     useAsTitle: 'title',
+    group: 'Cases',
     components: {
       edit: {
         beforeDocumentControls: ['@/components/admin/ViewCaseStudyButton'],
@@ -29,17 +30,6 @@ export const CaseStudies: CollectionConfig = {
     {
       name: 'summary',
       type: 'textarea',
-    },
-    {
-      name: 'tags',
-      type: 'array',
-      fields: [
-        {
-          name: 'tag',
-          type: 'text',
-          required: true,
-        },
-      ],
     },
     {
       name: 'projectTypes',

@@ -5,13 +5,22 @@ import { getPayload } from 'payload'
 import React from 'react'
 
 import config from '@/payload.config'
-import type { Media, Testimonial } from '@/payload-types'
+import type { Industry, Media, ProjectType, Techstack, Testimonial } from '@/payload-types'
 
 const asMedia = (value: unknown): Media | null =>
   value && typeof value === 'object' ? (value as Media) : null
 
 const asTestimonial = (value: unknown): Testimonial | null =>
   value && typeof value === 'object' ? (value as Testimonial) : null
+
+const asProjectType = (value: unknown): ProjectType | null =>
+  value && typeof value === 'object' ? (value as ProjectType) : null
+
+const asIndustry = (value: unknown): Industry | null =>
+  value && typeof value === 'object' ? (value as Industry) : null
+
+const asTechstack = (value: unknown): Techstack | null =>
+  value && typeof value === 'object' ? (value as Techstack) : null
 
 export default async function CaseStudyDetailPage({
   params,
@@ -40,6 +49,15 @@ export default async function CaseStudyDetailPage({
   const testimonials = (caseStudy.testimonials || [])
     .map(asTestimonial)
     .filter((t): t is Testimonial => t !== null)
+  const projectTypes = (caseStudy.projectTypes || [])
+    .map(asProjectType)
+    .filter((pt): pt is ProjectType => pt !== null)
+  const industries = (caseStudy.industries || [])
+    .map(asIndustry)
+    .filter((ind): ind is Industry => ind !== null)
+  const techstacks = (caseStudy.techstacks || [])
+    .map(asTechstack)
+    .filter((ts): ts is Techstack => ts !== null)
 
   return (
     <div style={{ background: '#fff', color: '#0b1120', minHeight: '100vh' }}>
@@ -100,21 +118,71 @@ export default async function CaseStudyDetailPage({
 
         <h1 style={{ fontSize: '2.5rem', margin: '16px 0' }}>{caseStudy.title}</h1>
 
-        {caseStudy.tags && caseStudy.tags.length > 0 && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
-            {caseStudy.tags.map((t) => (
-              <span
-                key={t.id || t.tag}
-                style={{
-                  fontSize: '0.8rem',
-                  background: '#f1f5f9',
-                  padding: '4px 10px',
-                  borderRadius: 999,
-                }}
-              >
-                {t.tag}
-              </span>
-            ))}
+        {(projectTypes.length || industries.length || techstacks.length) && (
+          <div style={{ marginBottom: 24 }}>
+            {projectTypes.length > 0 && (
+              <div style={{ marginBottom: 12 }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Project Types</span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 4 }}>
+                  {projectTypes.map((pt) => (
+                    <span
+                      key={pt.id}
+                      style={{
+                        fontSize: '0.8rem',
+                        background: '#dbeafe',
+                        color: '#1e40af',
+                        padding: '4px 10px',
+                        borderRadius: 999,
+                      }}
+                    >
+                      {pt.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {industries.length > 0 && (
+              <div style={{ marginBottom: 12 }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Industries</span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 4 }}>
+                  {industries.map((ind) => (
+                    <span
+                      key={ind.id}
+                      style={{
+                        fontSize: '0.8rem',
+                        background: '#dcfce7',
+                        color: '#166534',
+                        padding: '4px 10px',
+                        borderRadius: 999,
+                      }}
+                    >
+                      {ind.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {techstacks.length > 0 && (
+              <div>
+                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tech Stack</span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 4 }}>
+                  {techstacks.map((ts) => (
+                    <span
+                      key={ts.id}
+                      style={{
+                        fontSize: '0.8rem',
+                        background: '#f1f5f9',
+                        color: '#475569',
+                        padding: '4px 10px',
+                        borderRadius: 999,
+                      }}
+                    >
+                      {ts.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

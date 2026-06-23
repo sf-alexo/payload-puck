@@ -8,8 +8,9 @@ export const ProjectTypes: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
-    group: 'Categories',
+    group: 'Cases',
   },
+  defaultSort: 'name',
   access: {
     read: () => true,
   },
@@ -19,12 +20,6 @@ export const ProjectTypes: CollectionConfig = {
       type: 'text',
       required: true,
       unique: true,
-    },
-    {
-      name: 'slug',
-      type: 'text',
-      unique: true,
-      index: true,
     },
   ],
 }
