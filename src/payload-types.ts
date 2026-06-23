@@ -214,12 +214,30 @@ export interface CaseStudy {
   id: number;
   title: string;
   slug: string;
+  portfolioTitle?: string | null;
+  descriptor?: string | null;
   summary?: string | null;
+  /**
+   * Client website URL
+   */
+  clientWebsite?: string | null;
+  /**
+   * Link to production/live site
+   */
+  linkToProd?: string | null;
+  /**
+   * Full story/case study URL
+   */
+  fullStoryUrl?: string | null;
   projectTypes?: (number | ProjectType)[] | null;
   industries?: (number | Industry)[] | null;
   techstacks?: (number | Techstack)[] | null;
   coverImage?: (number | null) | Media;
   testimonials?: (number | Testimonial)[] | null;
+  objective?: string | null;
+  challenge?: string | null;
+  solution?: string | null;
+  result?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -424,12 +442,21 @@ export interface PagesSelect<T extends boolean = true> {
 export interface CaseStudiesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  portfolioTitle?: T;
+  descriptor?: T;
   summary?: T;
+  clientWebsite?: T;
+  linkToProd?: T;
+  fullStoryUrl?: T;
   projectTypes?: T;
   industries?: T;
   techstacks?: T;
   coverImage?: T;
   testimonials?: T;
+  objective?: T;
+  challenge?: T;
+  solution?: T;
+  result?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -118,6 +118,14 @@ export default async function CaseStudyDetailPage({
 
         <h1 style={{ fontSize: '2.5rem', margin: '16px 0' }}>{caseStudy.title}</h1>
 
+        {caseStudy.portfolioTitle && (
+          <h2 style={{ fontSize: '1.5rem', margin: '0 0 16px', color: '#64748b', fontWeight: 400 }}>{caseStudy.portfolioTitle}</h2>
+        )}
+
+        {caseStudy.descriptor && (
+          <p style={{ fontSize: '1.1rem', margin: '0 0 24px', color: '#64748b' }}>{caseStudy.descriptor}</p>
+        )}
+
         {(projectTypes.length || industries.length || techstacks.length) && (
           <div style={{ marginBottom: 24 }}>
             {projectTypes.length > 0 && (
@@ -197,6 +205,100 @@ export default async function CaseStudyDetailPage({
 
         {caseStudy.summary && (
           <p style={{ fontSize: '1.15rem', lineHeight: 1.7 }}>{caseStudy.summary}</p>
+        )}
+
+        {(caseStudy.clientWebsite || caseStudy.linkToProd || caseStudy.fullStoryUrl) && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 32 }}>
+            {caseStudy.clientWebsite && (
+              <a
+                href={caseStudy.clientWebsite}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  padding: '8px 16px',
+                  background: '#f1f5f9',
+                  color: '#0b1120',
+                  textDecoration: 'none',
+                  borderRadius: 6,
+                  fontSize: '0.9rem',
+                  fontWeight: 500,
+                }}
+              >
+                Client Website
+              </a>
+            )}
+            {caseStudy.linkToProd && (
+              <a
+                href={caseStudy.linkToProd}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  padding: '8px 16px',
+                  background: '#dbeafe',
+                  color: '#1e40af',
+                  textDecoration: 'none',
+                  borderRadius: 6,
+                  fontSize: '0.9rem',
+                  fontWeight: 500,
+                }}
+              >
+                View Live Site
+              </a>
+            )}
+            {caseStudy.fullStoryUrl && (
+              <a
+                href={caseStudy.fullStoryUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  padding: '8px 16px',
+                  background: '#dcfce7',
+                  color: '#166534',
+                  textDecoration: 'none',
+                  borderRadius: 6,
+                  fontSize: '0.9rem',
+                  fontWeight: 500,
+                }}
+              >
+                Full Story
+              </a>
+            )}
+          </div>
+        )}
+
+        {(caseStudy.objective || caseStudy.challenge || caseStudy.solution || caseStudy.result) && (
+          <section style={{ marginTop: 48 }}>
+            {caseStudy.objective && (
+              <div style={{ marginBottom: 32 }}>
+                <h3 style={{ fontSize: '1.25rem', marginBottom: 12, color: '#0b1120' }}>Objective</h3>
+                <p style={{ lineHeight: 1.7, color: '#475569' }}>{caseStudy.objective}</p>
+              </div>
+            )}
+            {caseStudy.challenge && (
+              <div style={{ marginBottom: 32 }}>
+                <h3 style={{ fontSize: '1.25rem', marginBottom: 12, color: '#0b1120' }}>Challenge</h3>
+                <p style={{ lineHeight: 1.7, color: '#475569' }}>{caseStudy.challenge}</p>
+              </div>
+            )}
+            {caseStudy.solution && (
+              <div style={{ marginBottom: 32 }}>
+                <h3 style={{ fontSize: '1.25rem', marginBottom: 12, color: '#0b1120' }}>Solution</h3>
+                <p style={{ lineHeight: 1.7, color: '#475569' }}>{caseStudy.solution}</p>
+              </div>
+            )}
+            {caseStudy.result && (
+              <div style={{ marginBottom: 32 }}>
+                <h3 style={{ fontSize: '1.25rem', marginBottom: 12, color: '#0b1120' }}>Result</h3>
+                <p style={{ lineHeight: 1.7, color: '#475569' }}>{caseStudy.result}</p>
+              </div>
+            )}
+          </section>
         )}
 
         {testimonials.length > 0 && (

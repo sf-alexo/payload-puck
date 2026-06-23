@@ -123,12 +123,37 @@ Active Admin, Agora, Algolia, Angular, Apache Airflow, ApostropheCMS, ASP.NET, A
 1. Go to the Admin Panel at http://localhost:3000/admin
 2. Navigate to "Case Studies" collection
 3. Edit or create a case study
-4. In the edit form, you'll find three relationship fields:
+4. In the edit form, you'll find three relationship fields in the "Basics" section:
    - **Project Types** — Select from 14 predefined project types (e.g., AI/ML Solutions, Web Applications, Mobile Applications)
    - **Industries** — Select from 25 predefined industries (e.g., Healthcare & Pharmaceuticals, Financial Services)
    - **Tech Stack** — Select from 138 predefined technologies (e.g., React, AWS, Python)
 5. Select multiple items from each category as needed
 6. Save the case study
+
+### Case Study Fields
+
+The Case Studies collection has the following fields organized in two collapsible sections:
+
+#### Basics
+- **Title** — Required text field, used as the document title
+- **Slug** — Required unique text field for URL routing
+- **Portfolio Title** — Optional text field for portfolio display
+- **Descriptor** — Optional text field for a brief description
+- **Summary** — Optional textarea for a short summary
+- **Client Website** — Optional text field for client website URL
+- **Link to Prod** — Optional text field for production/live site URL
+- **Full Story URL** — Optional text field for full case study URL
+- **Project Types** — Relationship field to select project types
+- **Industries** — Relationship field to select industries
+- **Tech Stack** — Relationship field to select technologies
+- **Cover Image** — Upload field for the case study cover image
+- **Testimonials** — Relationship field to select testimonials
+
+#### Details
+- **Objective** — Optional textarea for the project objective
+- **Challenge** — Optional textarea for the challenge faced
+- **Solution** — Optional textarea for the solution implemented
+- **Result** — Optional textarea for the results achieved
 
 ### Viewing Categories on Case Study Pages
 When viewing a case study at `/case-studies/{slug}`, the assigned categories are displayed below the title with color-coded badges:
