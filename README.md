@@ -12,6 +12,7 @@ A Payload CMS 3.0 project with Puck editor integration for visual page building.
 - **Swiper Carousel** - Responsive carousel with navigation and pagination
 - **Authentication** - User authentication with admin panel access
 - **Edit/View Buttons** - Quick navigation between editor and published pages for logged-in users
+- **MCP Server** - AI assistants (Claude Desktop, Cursor, Windsurf) can read/edit content via the Model Context Protocol (`@payloadcms/plugin-mcp`)
 
 ## Prerequisites
 
@@ -52,7 +53,17 @@ Generate a random `PAYLOAD_SECRET`:
 mkdir -p media
 ```
 
-### 4. Start Development Server
+### 4. Run Database Migrations (required on a fresh clone)
+
+The SQLite database is **gitignored** and auto-`push` is disabled (`push: false`), so the schema is created only by running the committed migrations:
+
+```bash
+pnpm payload migrate
+```
+
+If prompted about having run Payload in dev mode, it's safe to answer **yes** on a brand-new clone (there's no data to lose).
+
+### 5. Start Development Server
 
 ```bash
 pnpm dev
@@ -149,6 +160,18 @@ pnpm payload migrate:status
 
 Migration files live in `src/migrations/` and are committed to the repo. Do **not** delete the SQLite database to apply schema changes — use migrations instead.
 
+## MCP Server (AI-Assisted Editing)
+
+This project ships the official `@payloadcms/plugin-mcp` plugin, exposing an MCP endpoint at `POST /api/mcp`. An AI client can read and edit CMS content through structured tools (e.g. reorder Puck blocks by editing a page's `layout.content` array) instead of clicking through the UI.
+
+Quick steps (full guide, including **Claude Desktop** setup, is in [`.claude/setup.md`](.claude/setup.md)):
+
+1. Start the dev server (`pnpm dev`).
+2. In `/admin` -> **MCP -> API Keys**, create your own key and enable the capabilities you need. Each person uses their own key.
+3. Point your MCP client at `http://localhost:3000/api/mcp` with header `Authorization: Bearer YOUR-MCP-API-KEY` (use `mcp-remote` for stdio-only clients like Claude Desktop).
+
+The plugin adds a `payload-mcp-api-keys` collection (admin group **MCP**); its schema is included in the committed migrations.
+
 ## Build for Production
 
 ```bash
@@ -161,7 +184,7 @@ pnpm start
 
 ## Notes
 
-- The SQLite database file (`snf-payload-poc.db`) is created automatically on first run
+- The SQLite database file (`snf-payload-poc.db`) is created when you run `pnpm payload migrate` (it is gitignored, so a fresh clone has no database until you migrate)
 - The database and `media` folder are gitignored (do not commit them)
 - To stop the development server, press `Ctrl+C` in the terminal
 

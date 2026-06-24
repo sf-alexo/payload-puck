@@ -37,6 +37,15 @@ Payload CMS + Next.js + Puck proof-of-concept. Goal per `SPEC.md`: validate edit
 - **UNCOMMITTED** (created after the push): public renderer `src/app/(frontend)/[slug]/`, `EditInPuckButton.tsx`, `Pages.ts` (beforeDocumentControls), `puck.config.tsx` (PuckData export), regenerated `importMap.js`. → commit + push next session.
 - HTTPS push needs a GitHub PAT as the password (account password won't work).
 
+## MCP (AI layer) — working
+- Installed **`@payloadcms/plugin-mcp` 3.85.1**; registered `mcpPlugin` in `src/payload.config.ts`.
+- Exposes `POST /api/mcp` (HTTP transport). **`pages`** enabled with find/create/update (delete blocked to protect the home page). **`media`, `case-studies`, `testimonials`, `project-types`, `industries`, `techstacks`, `users`** enabled with full CRUD. Each collection `description` documents intent for the LLM (pages describes the Puck `layout.content` reorder workflow).
+- Plugin adds **`payload-mcp-api-keys`** collection (admin group "MCP"); requires a Bearer API key on every request even in dev. **Each person creates their own key.**
+- Migrations applied (push:false): `20260624_132754_add_mcp_api_keys` + `20260624_141550_add_mcp_capabilities`. Both files + `migrations/index.ts` committed so a fresh clone gets the full schema from `pnpm payload migrate`.
+- **Verified end-to-end:** connected Windsurf/Cascade over HTTP; `tools/list`, `findPages`, and a real `createCaseStudies` (Acme Logistics, cover = media #16) all succeeded.
+- **Docs:** `.claude/setup.md` has a fresh-clone migration step + full Claude Desktop connection guide; `README.md` has an MCP section + migration step. Onboarding flow: pull → `pnpm install` → `cp .env.example .env` → `pnpm payload migrate` → `pnpm dev` → create MCP key → connect client.
+- **TODO next:** custom tools per plan (`list_puck_components`, `save_landing_page`, `draft_case_study`, etc.), optional Anthropic Mode B; consider a `status` field on case-studies for publish parity.
+
 ## Next steps / TODO
 - **Commit + push** the uncommitted renderer + Edit-visually button.
 - Frontend rendering for **Case Studies** / **Testimonials** (list + detail pages).

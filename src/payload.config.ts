@@ -1,5 +1,6 @@
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -301,5 +302,49 @@ export default buildConfig({
     },
   }),
   sharp,
-  plugins: [],
+  plugins: [
+    mcpPlugin({
+      collections: {
+        // Primary target for the AI page-layout workflow. The Puck drag-and-drop
+        // tree lives in the `layout` JSON field of each Pages document. The AI
+        // uses `findDocuments` to read a page, reorders/edits the Puck JSON, then
+        // `updateDocument` to push it back. Refreshing /edit/{slug} reflects it.
+        pages: {
+          description:
+            'Site pages. The `layout` field holds the Puck visual-editor JSON tree (a `{ root, content, zones }` object where `content` is an ordered array of blocks like Hero, CTA, RichText, Carousel, Bars, Table). Use findDocuments to read a page by id or slug (it returns the full `layout` JSON), reorder/edit the `layout.content` array (each item has a `type` and `props`), then updateDocument to push the whole `layout` object back. Reordering array elements changes block order; refreshing /edit/{slug} reflects the change.',
+          // Allow reading, creating and editing pages. Deletion stays disabled so the
+          // protected home page (slug "home") can never be removed via MCP.
+          enabled: {
+            create: true,
+            delete: false,
+            find: true,
+            update: true,
+          },
+        },
+        // Full CRUD enabled for all content collections so the AI can create and
+        // edit any collection's documents via MCP.
+        media: {
+          enabled: { create: true, delete: true, find: true, update: true },
+        },
+        'case-studies': {
+          enabled: { create: true, delete: true, find: true, update: true },
+        },
+        testimonials: {
+          enabled: { create: true, delete: true, find: true, update: true },
+        },
+        'project-types': {
+          enabled: { create: true, delete: true, find: true, update: true },
+        },
+        industries: {
+          enabled: { create: true, delete: true, find: true, update: true },
+        },
+        techstacks: {
+          enabled: { create: true, delete: true, find: true, update: true },
+        },
+        users: {
+          enabled: { create: true, delete: true, find: true, update: true },
+        },
+      },
+    }),
+  ],
 })

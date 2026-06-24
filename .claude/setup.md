@@ -2,6 +2,115 @@
 
 When a user asks to "launch this project locally" or "set up and run this project", follow these steps in order.
 
+---
+
+## Claude Playbook: Guide a Non-Technical User (Run + Connect MCP)
+
+> **For Claude/the AI agent.** This is a script for walking a NON-TECHNICAL person from a fresh repo
+> to a running app with their MCP client connected. Lead them one step at a time. Run commands **for**
+> them whenever possible; only ask them to do what you cannot (clicking in apps, typing passwords,
+> editing a desktop app's config). Confirm each step succeeded before moving to the next.
+
+### How to behave during onboarding
+- **One step at a time.** Never paste a wall of commands. Do a step, verify it, then continue.
+- **Run commands yourself** in the terminal instead of asking them to type. Say plainly what you're
+  doing and why, in everyday language ("I'm starting the website on your computer").
+- **Check, don't assume.** After each step, verify with a command or by asking what they see on screen.
+- **On errors**, read it, fix it if you can, and explain simply. Don't dump raw stack traces on them.
+- **Protect secrets.** The `PAYLOAD_SECRET` and the MCP API key are sensitive — don't expose them
+  unnecessarily in chat.
+
+### Phase 0 — Prerequisites
+Run these and interpret the results for the user:
+```bash
+node -v      # need v18.20.2+ or v20.9.0+
+pnpm -v      # need v9 or v10
+```
+- If `node` is missing → point them to https://nodejs.org (download the LTS), wait until installed.
+- If `pnpm` is missing → run `corepack enable` (preferred) or `npm install -g pnpm`.
+- Confirm they're in the project folder: run `pwd` and `ls`, check you can see `package.json`.
+
+### Phase 1 — Install dependencies
+```bash
+pnpm install
+```
+Tell them: "I'm downloading what the project needs — this takes a minute or two." Success ends with
+"Done". Most failures are a Node version mismatch (fix Phase 0) or no internet.
+
+### Phase 2 — Environment file
+- If `.env` is missing, create it from the example: `cp .env.example .env`.
+- Ensure it contains exactly:
+  ```
+  DATABASE_URL=file:./snf-payload-poc.db
+  PAYLOAD_SECRET=<any-random-string>
+  ```
+- If `PAYLOAD_SECRET` is empty/placeholder, generate one with `openssl rand -base64 32` and write it in.
+  (`.env.example` may show a MongoDB URL — this project uses the SQLite `file:` URL above.)
+
+### Phase 3 — Create the media folder
+```bash
+mkdir -p media
+```
+Explain: "This is where uploaded images will live."
+
+### Phase 4 — Create the database (REQUIRED)
+The database file is not included in the repo, so it must be built from migrations:
+```bash
+pnpm payload migrate
+```
+Explain: "I'm setting up the project's database." If it asks about having run in dev mode, on a fresh
+setup it's safe to answer **yes**. Verify with `pnpm payload migrate:status` (all rows say "Yes").
+
+### Phase 5 — Start the app
+Start the dev server (non-blocking) and wait for "Ready":
+```bash
+pnpm dev
+```
+Tell them: "Your site is now running. Open http://localhost:3000 in your browser." Then have them:
+1. Visit **http://localhost:3000/admin** and **create the first user** (this becomes the admin).
+   Ask them to do this — they choose the email/password. Wait for confirmation they're logged in.
+
+### Phase 6 — Create their MCP API key
+Guide them through the admin UI (you can't click for them):
+1. In the admin panel, find **MCP → API Keys** in the left sidebar.
+2. Click **Create New**.
+3. Turn ON the capabilities they want the AI to have (for the page/content workflows, enable the
+   `pages` and `case-studies` options; enabling all is fine for a demo).
+4. Click **Create** and **copy the generated key**.
+Ask them to paste the key back to you so you can finish the connection (or keep it for the config).
+
+### Phase 7 — Connect their MCP client
+Pick the client they use. The full configs are in **"MCP Server (AI-Assisted Editing)"** below.
+- **Claude Desktop** → follow "Connecting Claude Desktop (step-by-step)". You give them the exact JSON
+  (with their key) and the config file location; they paste it and restart the app.
+- **Cursor / Windsurf** → use the HTTP config (`serverUrl` + `Authorization: Bearer <key>` header).
+After they add it and refresh/restart, verify: the client should list the **payload** server with
+`findPages` and `updatePages`. You can also confirm the server is healthy yourself:
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" -X POST 'http://localhost:3000/api/mcp' \
+  -H 'Authorization: Bearer THEIR-KEY' -H 'Content-Type: application/json' \
+  -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":"1","method":"tools/list","params":{}}'
+```
+`200` = working. `401` = wrong/disabled key. Connection refused = `pnpm dev` not running.
+
+### Phase 8 — Celebrate + show them what to try
+Tell them it's connected and give 1–2 example prompts they can try from their client, e.g.
+"Find the home page and show its block order" or "Create a case study about <topic> and use an image
+from the library as the cover."
+
+### Quick recap (the whole happy path)
+```bash
+pnpm install
+cp .env.example .env      # then set DATABASE_URL=file:./snf-payload-poc.db and a PAYLOAD_SECRET
+mkdir -p media
+pnpm payload migrate
+pnpm dev
+```
+Then: create admin user → MCP → API Keys → create key → add server to their MCP client → restart.
+
+---
+
 ## Prerequisites
 - Ensure **Node.js** (v18+) and **pnpm** are installed. If not, guide the user to install them first.
 
@@ -57,7 +166,20 @@ New-Item -ItemType Directory -Path media -Force
 if not exist media mkdir media
 ```
 
-## Step 4: Start the development server
+## Step 4: Run database migrations (REQUIRED on a fresh clone)
+The SQLite database file is **gitignored**, so when you pull the repo you start with **no database**. This project has Drizzle auto-`push` disabled (`push: false` in `src/payload.config.ts`), which means the schema is created **only** by running the committed migrations. Run them before starting the app:
+
+```bash
+pnpm payload migrate
+```
+
+This creates `snf-payload-poc.db` (if missing) and applies every migration in `src/migrations/`, including the `payload-mcp-api-keys` table used by the MCP plugin. On first run the app also auto-seeds the home page and the category collections (see "Seeded Data").
+
+- If prompted "It looks like you've run Payload in dev mode … would you like to proceed?", that warning only matters on a database that was previously dev-pushed. On a brand-new clone there's no data to lose — answer **yes**.
+- Check status anytime with `pnpm payload migrate:status`.
+- **Do not delete the `.db` file** to fix schema issues — run migrations instead.
+
+## Step 5: Start the development server
 Run:
 ```bash
 pnpm dev
@@ -65,7 +187,7 @@ pnpm dev
 
 The server will start at **http://localhost:3000**.
 
-## Step 5: Access the app
+## Step 6: Access the app
 - **Admin panel:** http://localhost:3000/admin
 - **Public site:** http://localhost:3000
 
@@ -198,6 +320,138 @@ Categories are only shown if at least one item is assigned to the case study.
 ### Rich Text Editing
 - Rich text fields support bold, italic, and other formatting
 - Content is stored as HTML and rendered safely on the frontend
+
+## MCP Server (AI-Assisted Editing)
+
+The project includes the official `@payloadcms/plugin-mcp` plugin, which exposes a Model Context Protocol (MCP) endpoint at `POST /api/mcp`. This lets an AI client (Claude Desktop, Cursor, etc.) read and edit CMS content through structured tools instead of UI clicks.
+
+### What's enabled
+The `pages` collection is exposed with these capabilities (configured in `src/payload.config.ts`):
+- **find** — read pages, including the full Puck `layout` JSON tree.
+- **update** — save changes back to a page.
+- **create / delete** — disabled via MCP (pages are created/removed only in the admin UI).
+
+The plugin also auto-adds a `payload-mcp-api-keys` collection (admin group **MCP**) for issuing API keys.
+
+### Puck layout editing workflow
+Each page stores its Puck drag-and-drop layout in the `layout` JSON field, shaped as `{ root, content, zones }` where `content` is an ordered array of blocks (Hero, CTA, RichText, Carousel, Bars, Table). The AI flow is:
+1. AI calls `findDocuments` (pages) to pull a page by `id` or `slug`.
+2. AI edits/reorders the `layout.content` array (each item has a `type` and `props`).
+3. AI calls `updateDocument` (pages) to push the modified `layout` back.
+4. Refresh `http://localhost:3000/edit/{slug}` to see the blocks in their new positions.
+
+Example prompt: _"Find the page with slug `home`, move the Hero block to the top of its layout, and save."_
+
+### Step 1: Create an MCP API key
+This plugin version requires a Bearer API key on every request (even in development).
+1. Go to `http://localhost:3000/admin` → **MCP → API Keys** → **Create New**.
+2. Allow the capabilities you want the key to use (e.g. the `pages` find/update).
+3. Click **Create** and copy the generated key.
+
+### Step 2: Connect an MCP client
+**Native HTTP (Claude Desktop / Cursor):**
+```json
+{
+  "mcpServers": {
+    "Payload": {
+      "type": "http",
+      "url": "http://localhost:3000/api/mcp",
+      "headers": { "Authorization": "Bearer YOUR-MCP-API-KEY" }
+    }
+  }
+}
+```
+
+**Via `mcp-remote` (for clients without native HTTP support):**
+```json
+{
+  "mcpServers": {
+    "Payload": {
+      "command": "npx",
+      "args": [
+        "-y", "mcp-remote",
+        "http://127.0.0.1:3000/api/mcp",
+        "--header", "Authorization: Bearer YOUR-MCP-API-KEY"
+      ]
+    }
+  }
+}
+```
+
+### Connecting Claude Desktop (step-by-step)
+Claude Desktop is the most common client for this project. Each person uses **their own** MCP API key.
+
+**Prerequisites**
+- The dev server is running (`pnpm dev`) so `http://localhost:3000/api/mcp` is reachable.
+- You created your own key in `/admin` → **MCP → API Keys** (see Step 1 above) and enabled the capabilities you need.
+- **Node.js is installed** (Claude Desktop runs `npx`).
+
+**1. Open the Claude Desktop config file**
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+
+You can also reach it from the app: **Settings → Developer → Edit Config**. If the file doesn't exist, create it.
+
+**2. Add the Payload server.** Claude Desktop connects over stdio, so use the `mcp-remote` adapter to bridge to our HTTP endpoint. Merge this into the file (keep any existing servers):
+```json
+{
+  "mcpServers": {
+    "payload": {
+      "command": "npx",
+      "args": [
+        "-y", "mcp-remote",
+        "http://127.0.0.1:3000/api/mcp",
+        "--header", "Authorization: Bearer YOUR-MCP-API-KEY"
+      ]
+    }
+  }
+}
+```
+Replace `YOUR-MCP-API-KEY` with the key you generated.
+
+**3. Restart Claude Desktop** completely (quit and reopen — config is read on launch).
+
+**4. Verify.** In a new chat, click the tools/connector icon. You should see the **payload** server with the `findPages` and `updatePages` tools. Try: _"Use the payload MCP to find the page with slug `home` and show its block order."_
+
+**Alternative — stdio with no dev server / no API key (local only):** Claude Desktop can run the bundled `payload-mcp` bin directly against your local Payload install. This skips the HTTP server and the API key, but spawns its own process that opens the SQLite file, so **stop `pnpm dev` first** to avoid write-lock conflicts:
+```json
+{
+  "mcpServers": {
+    "payload": {
+      "command": "npx",
+      "args": ["payload-mcp"],
+      "env": {
+        "PAYLOAD_CONFIG_PATH": "/ABSOLUTE/PATH/TO/snf-payload-poc/src/payload.config.ts",
+        "DATABASE_URL": "file:/ABSOLUTE/PATH/TO/snf-payload-poc/snf-payload-poc.db",
+        "PAYLOAD_SECRET": "your-payload-secret-from-.env",
+        "PAYLOAD_MCP_OVERRIDE_ACCESS": "true"
+      }
+    }
+  }
+}
+```
+Use absolute paths so it works regardless of Claude Desktop's working directory.
+
+**Troubleshooting**
+- **Tools don't appear:** fully quit and relaunch Claude Desktop; tools load on startup.
+- **401 Unauthorized (HTTP/`mcp-remote` mode):** the API key is wrong/disabled, or its capabilities are off — recreate it in `/admin` → MCP → API Keys.
+- **Connection refused (HTTP mode):** `pnpm dev` isn't running, or the port differs from 3000.
+- **stdio mode errors about config/DB:** check the absolute paths and that you ran `pnpm payload migrate` at least once.
+
+### Testing the endpoint
+List available tools with curl (replace the key):
+```bash
+curl -i 'http://localhost:3000/api/mcp' \
+  -X POST \
+  -H 'Authorization: Bearer YOUR-MCP-API-KEY' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":"1","method":"tools/list","params":{}}'
+```
+A request without a valid key returns `401 Unauthorized` — this is expected.
+
+### Migrations note
+The plugin adds the `payload-mcp-api-keys` collection. Because `push: false` is set, its table is created by the committed migration `src/migrations/20260624_132754_add_mcp_api_keys.ts`. Run `pnpm payload migrate` if setting up a fresh database.
 
 ## Notes
 - The SQLite database file (`snf-payload-poc.db`) is created automatically by Payload on first run.

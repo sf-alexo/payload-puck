@@ -22,6 +22,19 @@ export const Pages: CollectionConfig = {
         if (originalDoc?.slug === 'home') {
           data.slug = 'home'
         }
+
+        // Some clients (e.g. the Payload MCP plugin's updateDocument tool)
+        // serialize the `layout` JSON field to a string before saving, which
+        // corrupts the json column. Coerce it back to an object on every write
+        // so the value stored in the DB is always valid JSON.
+        if (typeof data.layout === 'string') {
+          try {
+            data.layout = JSON.parse(data.layout)
+          } catch {
+            // Leave as-is if it isn't parseable; validation will surface it.
+          }
+        }
+
         return data
       },
     ],
