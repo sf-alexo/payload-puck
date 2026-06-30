@@ -4,6 +4,7 @@ import * as migration_20260623_114138_remove_slug_from_categories from './202606
 import * as migration_20260623_120302_add_case_study_fields from './20260623_120302_add_case_study_fields';
 import * as migration_20260624_132754_add_mcp_api_keys from './20260624_132754_add_mcp_api_keys';
 import * as migration_20260624_141550_add_mcp_capabilities from './20260624_141550_add_mcp_capabilities';
+import * as migration_20260629_124500_add_page_hierarchy from './20260629_124500_add_page_hierarchy';
 
 export const migrations = [
   {
@@ -35,5 +36,10 @@ export const migrations = [
     up: migration_20260624_141550_add_mcp_capabilities.up,
     down: migration_20260624_141550_add_mcp_capabilities.down,
     name: '20260624_141550_add_mcp_capabilities'
+  },
+  {
+    up: migration_20260629_124500_add_page_hierarchy.up,
+    down: migration_20260629_124500_add_page_hierarchy.down,
+    name: '20260629_124500_add_page_hierarchy',
   },
 ];

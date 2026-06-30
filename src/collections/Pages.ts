@@ -4,10 +4,12 @@ export const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
     useAsTitle: 'title',
+    defaultColumns: ['title', 'slug', 'parent', 'order', 'status'],
     components: {
       edit: {
         beforeDocumentControls: ['@/components/EditInPuckButton#EditInPuckButton'],
       },
+      beforeListTable: ['@/components/PagesHierarchyPanel#default'],
     },
   },
   access: {
@@ -17,10 +19,33 @@ export const Pages: CollectionConfig = {
   },
   hooks: {
     beforeChange: [
-      ({ data, originalDoc }) => {
+      async ({ data, originalDoc, req }) => {
         // The home page slug is locked and cannot be renamed.
         if (originalDoc?.slug === 'home') {
           data.slug = 'home'
+        }
+
+        // The home page is the root of the hierarchy and must not have a parent.
+        const isHome = data.slug === 'home' || originalDoc?.slug === 'home'
+        if (isHome) {
+          data.parent = null
+        } else if (data.parent == null) {
+          // Default every other page's parent to the Home page when none is set.
+          const home = await req.payload.find({
+            collection: 'pages',
+            where: { slug: { equals: 'home' } },
+            limit: 1,
+            depth: 0,
+          })
+          const homeId = home.docs[0]?.id
+          if (homeId != null && homeId !== originalDoc?.id) {
+            data.parent = homeId
+          }
+        }
+
+        // A page cannot be its own parent.
+        if (data.parent != null && originalDoc?.id != null && data.parent === originalDoc.id) {
+          throw new Error('A page cannot be its own parent.')
         }
 
         // Some clients (e.g. the Payload MCP plugin's updateDocument tool)
@@ -53,6 +78,26 @@ export const Pages: CollectionConfig = {
       index: true,
       admin: {
         description: 'URL path segment. The home page uses the reserved slug "home" and cannot be changed or deleted.',
+      },
+    },
+    {
+      name: 'parent',
+      type: 'relationship',
+      relationTo: 'pages',
+      index: true,
+      admin: {
+        description:
+          'Parent page in the site hierarchy. Leave empty for a top-level page. Used to build the sitemap/navigation tree.',
+      },
+      filterOptions: ({ id }) => (id ? { id: { not_equals: id } } : true),
+    },
+    {
+      name: 'order',
+      type: 'number',
+      defaultValue: 0,
+      index: true,
+      admin: {
+        description: 'Sort order among siblings (lower numbers appear first).',
       },
     },
     {

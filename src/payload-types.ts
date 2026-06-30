@@ -211,6 +211,14 @@ export interface Page {
    * URL path segment. The home page uses the reserved slug "home" and cannot be changed or deleted.
    */
   slug: string;
+  /**
+   * Parent page in the site hierarchy. Leave empty for a top-level page. Used to build the sitemap/navigation tree.
+   */
+  parent?: (number | null) | Page;
+  /**
+   * Sort order among siblings (lower numbers appear first).
+   */
+  order?: number | null;
   status?: ('draft' | 'published') | null;
   /**
    * Visual page layout produced by the Puck editor. Edit at /edit/{slug}.
@@ -632,6 +640,8 @@ export interface MediaSelect<T extends boolean = true> {
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  parent?: T;
+  order?: T;
   status?: T;
   layout?: T;
   updatedAt?: T;

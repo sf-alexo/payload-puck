@@ -1,3 +1,4 @@
+import { default as default_1fd369b027a2788e06e480c47ba16219 } from '@/components/PagesHierarchyPanel'
 import { EditInPuckButton as EditInPuckButton_7a606c3518ce626b3a78f1e88a1070e6 } from '@/components/EditInPuckButton'
 import { default as default_b6d7fab9c9885de1425f270ff1b20f84 } from '@/components/admin/ViewCaseStudyButton'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -28,6 +29,7 @@ import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } f
 
 /** @type import('payload').ImportMap */
 export const importMap = {
+  "@/components/PagesHierarchyPanel#default": default_1fd369b027a2788e06e480c47ba16219,
   "@/components/EditInPuckButton#EditInPuckButton": EditInPuckButton_7a606c3518ce626b3a78f1e88a1070e6,
   "@/components/admin/ViewCaseStudyButton#default": default_b6d7fab9c9885de1425f270ff1b20f84,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
