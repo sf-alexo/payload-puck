@@ -2,6 +2,26 @@ import React from 'react'
 import type { Config, Data } from '@puckeditor/core'
 import MediaField from './fields/MediaField'
 import CarouselComponent from './components/Carousel'
+import { RichTextToolbar } from './fields/RichTextToolbar'
+import { richTextExtensions, richTextSelector } from './fields/richText'
+
+// Shared config that adds a custom styles dropdown + color picker to any
+// richtext field's toolbar, while keeping inline editing in the preview.
+const richTextEditing = {
+  contentEditable: true,
+  tiptap: {
+    extensions: richTextExtensions,
+    selector: richTextSelector,
+  },
+  renderMenu: (props: React.ComponentProps<typeof RichTextToolbar>) => (
+    <RichTextToolbar {...props} />
+  ),
+  // Same custom toolbar for the in-context (bubble) menu shown while editing
+  // text directly in the preview.
+  renderInlineMenu: (props: React.ComponentProps<typeof RichTextToolbar>) => (
+    <RichTextToolbar {...props} />
+  ),
+} as const
 
 export type HeroProps = {
   title: string
@@ -64,7 +84,7 @@ export const puckConfig: Config<Components> = {
       label: 'Hero with Image',
       fields: {
         title: { type: 'text', label: 'Title' },
-        subtitle: { type: 'richtext', label: 'Subtitle' },
+        subtitle: { type: 'richtext', label: 'Subtitle', ...richTextEditing },
         imageId: {
           type: 'custom',
           render: (props) => <MediaField {...props} />,
@@ -158,7 +178,7 @@ export const puckConfig: Config<Components> = {
     RichText: {
       label: 'Rich Text',
       fields: {
-        content: { type: 'richtext', label: 'Content' },
+        content: { type: 'richtext', label: 'Content', ...richTextEditing },
       },
       defaultProps: {
         content: 'Write your paragraph content here.',
@@ -184,7 +204,7 @@ export const puckConfig: Config<Components> = {
           type: 'array',
           arrayFields: {
             title: { type: 'text', label: 'Title' },
-            description: { type: 'richtext', label: 'Description' },
+            description: { type: 'richtext', label: 'Description', ...richTextEditing },
             imageId: {
               type: 'custom',
               render: (props) => <MediaField {...props} />,

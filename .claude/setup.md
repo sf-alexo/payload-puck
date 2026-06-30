@@ -320,6 +320,10 @@ Categories are only shown if at least one item is assigned to the case study.
 ### Rich Text Editing
 - Rich text fields support bold, italic, and other formatting
 - Content is stored as HTML and rendered safely on the frontend
+- **Inline editing:** Click directly on text in the preview canvas to edit in place
+- **Custom toolbar:** Includes a "Styles" dropdown with presets (Normal, Lead paragraph, Small, Muted, Highlight) and a color picker
+- **In-context menu:** The same toolbar appears in the bubble menu when editing text inline
+- Formatting uses inline styles (font-size, color, background-color) so it renders correctly on the public site without extra CSS
 
 ## MCP Server (AI-Assisted Editing)
 
