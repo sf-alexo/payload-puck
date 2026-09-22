@@ -1,0 +1,42 @@
+diff --git a/dist/views/CreateFirstUser/index.client.js b/dist/views/CreateFirstUser/index.client.js
+index a89f3bfb407168c6e2f131035f99e7c5e6248a7b..a6b690c249e02e9e4084f709e5f684aee65b9966 100644
+--- a/dist/views/CreateFirstUser/index.client.js
++++ b/dist/views/CreateFirstUser/index.client.js
+@@ -96,7 +96,7 @@ export const CreateFirstUserClient = ({
+       },
+       path: "password"
+     }), /*#__PURE__*/_jsx(ConfirmPasswordField, {}), /*#__PURE__*/_jsx(RenderFields, {
+-      fields: collectionConfig.fields,
++      fields: collectionConfig?.fields || [],
+       forceRender: true,
+       parentIndexPath: "",
+       parentPath: "",
+diff --git a/dist/views/Login/LoginForm/index.js b/dist/views/Login/LoginForm/index.js
+index a2375f346c6248d9aacba04dd1d958e5237a747e..bf1d2a11a7cd6e55551ad6c1eb1ed59462ade716 100644
+--- a/dist/views/Login/LoginForm/index.js
++++ b/dist/views/Login/LoginForm/index.js
+@@ -40,10 +40,7 @@ export const LoginForm = t0 => {
+     const collectionConfig = getEntityConfig({
+       collectionSlug: userSlug
+     });
+-    const {
+-      auth: authOptions
+-    } = collectionConfig;
+-    loginWithUsername = authOptions.loginWithUsername;
++    loginWithUsername = collectionConfig?.auth?.loginWithUsername;
+     t4 = getLoginOptions(loginWithUsername);
+     $[0] = getEntityConfig;
+     $[1] = userSlug;
+diff --git a/dist/views/Root/index.js b/dist/views/Root/index.js
+index ddfe9e66d2347e8643f35c6255b1ff128da61abc..d9070bac44c3b388dc281d14e8b4f4225463be6b 100644
+--- a/dist/views/Root/index.js
++++ b/dist/views/Root/index.js
+@@ -132,7 +132,7 @@ export const RootPage = async ({
+     }));
+   }
+   let collectionPreferences = undefined;
+-  if (collectionConfig && segments.length === 2) {
++  if (req?.user?.id && collectionConfig && segments.length === 2) {
+     if (config.folders && collectionConfig.folders && segments[1] !== config.folders.slug) {
+       await getPreferences(`collection-${collectionConfig.slug}`, req.payload, req.user.id, config.admin.user).then(res => {
+         if (res && res.value) {
