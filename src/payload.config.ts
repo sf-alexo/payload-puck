@@ -1,6 +1,7 @@
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { mcpPlugin } from '@payloadcms/plugin-mcp'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -317,6 +318,7 @@ export default buildConfig({
     push: false,
     client: {
       url: process.env.DATABASE_URL || '',
+      authToken: process.env.DATABASE_AUTH_TOKEN,
     },
   }),
   sharp,
@@ -363,6 +365,13 @@ export default buildConfig({
           enabled: { create: true, delete: true, find: true, update: true },
         },
       },
+    }),
+    // Uploads go to Vercel Blob when BLOB_READ_WRITE_TOKEN is set (production);
+    // otherwise media falls back to the local media/ directory for dev.
+    vercelBlobStorage({
+      enabled: !!process.env.BLOB_READ_WRITE_TOKEN,
+      collections: { media: true },
+      token: process.env.BLOB_READ_WRITE_TOKEN || '',
     }),
   ],
 })

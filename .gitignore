@@ -49,6 +49,9 @@ next-env.d.ts
 
 /media
 
+# scraped reference site assets (not part of the app)
+/revel
+
 # Playwright
 node_modules/
 /test-results/
