@@ -2,6 +2,29 @@ import React from 'react'
 import type { Config, Data } from '@puckeditor/core'
 import MediaField from './fields/MediaField'
 import CarouselComponent from './components/Carousel'
+import {
+  RevelHero,
+  MembershipRates,
+  ResidentTestimonials,
+  FloorPlans,
+  LifestylePillars,
+  CulinaryFeature,
+  AmenitiesGrid,
+  CommunityGallery,
+  TourCTA,
+  FAQAccordion,
+  type RevelHeroProps,
+  type MembershipRatesProps,
+  type ResidentTestimonialsProps,
+  type FloorPlansProps,
+  type LifestylePillarsProps,
+  type CulinaryFeatureProps,
+  type AmenitiesGridProps,
+  type CommunityGalleryProps,
+  type TourCTAProps,
+  type FAQAccordionProps,
+} from './components/RevelBlocks'
+import { revelEagleDefaults } from './revelEagleLayout'
 import { RichTextToolbar } from './fields/RichTextToolbar'
 import { richTextExtensions, richTextSelector } from './fields/richText'
 
@@ -74,7 +97,27 @@ type Components = {
   Carousel: CarouselProps
   Bars: BarsProps
   Table: TableProps
+  RevelHero: RevelHeroProps
+  MembershipRates: MembershipRatesProps
+  ResidentTestimonials: ResidentTestimonialsProps
+  FloorPlans: FloorPlansProps
+  LifestylePillars: LifestylePillarsProps
+  CulinaryFeature: CulinaryFeatureProps
+  AmenitiesGrid: AmenitiesGridProps
+  CommunityGallery: CommunityGalleryProps
+  TourCTA: TourCTAProps
+  FAQAccordion: FAQAccordionProps
 }
+
+const mediaImageFields = {
+  imageId: {
+    type: 'custom',
+    render: (props: { value: string | undefined; onChange: (value: string | undefined) => void }) => (
+      <MediaField {...props} />
+    ),
+  },
+  alt: { type: 'text', label: 'Alt text' },
+} as const
 
 export type PuckData = Data<Components>
 
@@ -360,6 +403,174 @@ export const puckConfig: Config<Components> = {
           </section>
         )
       },
+    },
+    RevelHero: {
+      label: 'Revel — Hero',
+      fields: {
+        ...mediaImageFields,
+        eyebrow: { type: 'text', label: 'Eyebrow' },
+        title: { type: 'text', label: 'Title' },
+        description: { type: 'richtext', label: 'Description', ...richTextEditing },
+        primaryLabel: { type: 'text', label: 'Primary Button Label' },
+        primaryHref: { type: 'text', label: 'Primary Button URL' },
+        secondaryLabel: { type: 'text', label: 'Secondary Button Label' },
+        secondaryHref: { type: 'text', label: 'Secondary Button URL' },
+      },
+      defaultProps: revelEagleDefaults.RevelHero,
+      render: ({ puck: _puck, editMode: _editMode, ...props }) => <RevelHero {...props} />,
+    },
+    MembershipRates: {
+      label: 'Revel — Membership & Rates',
+      fields: {
+        heading: { type: 'text', label: 'Heading' },
+        description: { type: 'richtext', label: 'Description', ...richTextEditing },
+        price: { type: 'text', label: 'Price' },
+        inclusions: {
+          type: 'array',
+          arrayFields: {
+            text: { type: 'text', label: 'Inclusion' },
+          },
+          label: 'Inclusions',
+        },
+        buttonLabel: { type: 'text', label: 'Button Label' },
+        buttonHref: { type: 'text', label: 'Button URL' },
+        images: {
+          type: 'array',
+          arrayFields: { ...mediaImageFields },
+          label: 'Images',
+        },
+      },
+      defaultProps: revelEagleDefaults.MembershipRates,
+      render: ({ puck: _puck, editMode: _editMode, ...props }) => <MembershipRates {...props} />,
+    },
+    ResidentTestimonials: {
+      label: 'Revel — Resident Testimonials',
+      fields: {
+        heading: { type: 'text', label: 'Heading' },
+        rating: { type: 'number', label: 'Rating (0-5)' },
+        reviewCount: { type: 'number', label: 'Review Count' },
+        testimonials: {
+          type: 'array',
+          arrayFields: {
+            quote: { type: 'richtext', label: 'Quote', ...richTextEditing },
+            author: { type: 'text', label: 'Author' },
+          },
+          label: 'Testimonials',
+        },
+      },
+      defaultProps: revelEagleDefaults.ResidentTestimonials,
+      render: ({ puck: _puck, editMode: _editMode, ...props }) => <ResidentTestimonials {...props} />,
+    },
+    FloorPlans: {
+      label: 'Revel — Floor Plans',
+      fields: {
+        heading: { type: 'text', label: 'Heading' },
+        description: { type: 'richtext', label: 'Description', ...richTextEditing },
+        buttonLabel: { type: 'text', label: 'Button Label' },
+        buttonHref: { type: 'text', label: 'Button URL' },
+        images: {
+          type: 'array',
+          arrayFields: { ...mediaImageFields },
+          label: 'Images',
+        },
+      },
+      defaultProps: revelEagleDefaults.FloorPlans,
+      render: ({ puck: _puck, editMode: _editMode, ...props }) => <FloorPlans {...props} />,
+    },
+    LifestylePillars: {
+      label: 'Revel — Lifestyle Pillars',
+      fields: {
+        heading: { type: 'text', label: 'Heading' },
+        description: { type: 'richtext', label: 'Description', ...richTextEditing },
+        pillars: {
+          type: 'array',
+          arrayFields: {
+            ...mediaImageFields,
+            title: { type: 'text', label: 'Title' },
+            description: { type: 'richtext', label: 'Description', ...richTextEditing },
+          },
+          label: 'Pillars',
+        },
+      },
+      defaultProps: revelEagleDefaults.LifestylePillars,
+      render: ({ puck: _puck, editMode: _editMode, ...props }) => <LifestylePillars {...props} />,
+    },
+    CulinaryFeature: {
+      label: 'Revel — Culinary Feature',
+      fields: {
+        heading: { type: 'text', label: 'Heading' },
+        description: { type: 'richtext', label: 'Description', ...richTextEditing },
+        buttonLabel: { type: 'text', label: 'Button Label' },
+        buttonHref: { type: 'text', label: 'Button URL' },
+        images: {
+          type: 'array',
+          arrayFields: { ...mediaImageFields },
+          label: 'Images',
+        },
+      },
+      defaultProps: revelEagleDefaults.CulinaryFeature,
+      render: ({ puck: _puck, editMode: _editMode, ...props }) => <CulinaryFeature {...props} />,
+    },
+    AmenitiesGrid: {
+      label: 'Revel — Amenities',
+      fields: {
+        heading: { type: 'text', label: 'Heading' },
+        description: { type: 'richtext', label: 'Description', ...richTextEditing },
+        amenities: {
+          type: 'array',
+          arrayFields: {
+            ...mediaImageFields,
+            name: { type: 'text', label: 'Name' },
+          },
+          label: 'Amenities',
+        },
+      },
+      defaultProps: revelEagleDefaults.AmenitiesGrid,
+      render: ({ puck: _puck, editMode: _editMode, ...props }) => <AmenitiesGrid {...props} />,
+    },
+    CommunityGallery: {
+      label: 'Revel — Gallery',
+      fields: {
+        heading: { type: 'text', label: 'Heading' },
+        description: { type: 'richtext', label: 'Description', ...richTextEditing },
+        buttonLabel: { type: 'text', label: 'Button Label' },
+        buttonHref: { type: 'text', label: 'Button URL' },
+        images: {
+          type: 'array',
+          arrayFields: { ...mediaImageFields },
+          label: 'Images',
+        },
+      },
+      defaultProps: revelEagleDefaults.CommunityGallery,
+      render: ({ puck: _puck, editMode: _editMode, ...props }) => <CommunityGallery {...props} />,
+    },
+    TourCTA: {
+      label: 'Revel — Tour CTA',
+      fields: {
+        ...mediaImageFields,
+        heading: { type: 'text', label: 'Heading' },
+        description: { type: 'richtext', label: 'Description', ...richTextEditing },
+        buttonLabel: { type: 'text', label: 'Button Label' },
+        buttonHref: { type: 'text', label: 'Button URL' },
+      },
+      defaultProps: revelEagleDefaults.TourCTA,
+      render: ({ puck: _puck, editMode: _editMode, ...props }) => <TourCTA {...props} />,
+    },
+    FAQAccordion: {
+      label: 'Revel — FAQ',
+      fields: {
+        heading: { type: 'text', label: 'Heading' },
+        items: {
+          type: 'array',
+          arrayFields: {
+            question: { type: 'text', label: 'Question' },
+            answer: { type: 'richtext', label: 'Answer', ...richTextEditing },
+          },
+          label: 'Questions',
+        },
+      },
+      defaultProps: revelEagleDefaults.FAQAccordion,
+      render: ({ puck: _puck, editMode: _editMode, ...props }) => <FAQAccordion {...props} />,
     },
   },
 }

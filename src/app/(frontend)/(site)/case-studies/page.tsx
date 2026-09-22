@@ -74,23 +74,6 @@ export default async function CaseStudiesPage() {
                         {cs.summary}
                       </p>
                     )}
-                    {cs.tags && cs.tags.length > 0 && (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
-                        {cs.tags.map((t) => (
-                          <span
-                            key={t.id || t.tag}
-                            style={{
-                              fontSize: '0.75rem',
-                              background: '#f1f5f9',
-                              padding: '2px 8px',
-                              borderRadius: 999,
-                            }}
-                          >
-                            {t.tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 </Link>
               )

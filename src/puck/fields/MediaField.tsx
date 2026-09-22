@@ -38,14 +38,14 @@ export default function MediaField({ value, onChange }: MediaFieldProps) {
           setPreviewUrl(null)
         })
     } else {
-      setPreviewUrl(null)
+      queueMicrotask(() => setPreviewUrl(null))
     }
   }, [value])
 
   // Fetch media library when library is opened
   useEffect(() => {
     if (showLibrary && mediaLibrary.length === 0) {
-      setLoadingLibrary(true)
+      queueMicrotask(() => setLoadingLibrary(true))
       fetch('/api/media?limit=50')
         .then(res => res.json())
         .then(data => {

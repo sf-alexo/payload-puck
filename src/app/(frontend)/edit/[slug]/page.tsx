@@ -50,6 +50,7 @@ async function resolveMediaUrls(data: Data, payload: any): Promise<Data> {
     where: {
       id: { in: Array.from(mediaIds) },
     },
+    limit: mediaIds.size,
   })
 
   const mediaMap = new Map<number, string>()

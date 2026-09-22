@@ -16,6 +16,7 @@ import { Industries } from './collections/Industries'
 import { Techstacks } from './collections/Techstacks'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
+import { revelEagleLayout } from './puck/revelEagleLayout'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -56,6 +57,23 @@ export default buildConfig({
           slug: 'home',
           status: 'published',
           layout: { content: [], root: {} },
+        },
+      })
+    }
+
+    const revelEagle = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: 'revel-eagle' } },
+      limit: 1,
+    })
+    if (revelEagle.docs.length === 0) {
+      await payload.create({
+        collection: 'pages',
+        data: {
+          title: 'Revel Eagle',
+          slug: 'revel-eagle',
+          status: 'published',
+          layout: revelEagleLayout,
         },
       })
     }
@@ -311,7 +329,7 @@ export default buildConfig({
         // `updateDocument` to push it back. Refreshing /edit/{slug} reflects it.
         pages: {
           description:
-            'Site pages. The `layout` field holds the Puck visual-editor JSON tree (a `{ root, content, zones }` object where `content` is an ordered array of blocks like Hero, CTA, RichText, Carousel, Bars, Table). Use findDocuments to read a page by id or slug (it returns the full `layout` JSON), reorder/edit the `layout.content` array (each item has a `type` and `props`), then updateDocument to push the whole `layout` object back. Reordering array elements changes block order; refreshing /edit/{slug} reflects the change.',
+            'Site pages. The `layout` field holds the Puck visual-editor JSON tree (a `{ root, content, zones }` object where `content` is an ordered array of blocks like Hero, CTA, RichText, Carousel, Bars, Table, RevelHero, MembershipRates, ResidentTestimonials, FloorPlans, LifestylePillars, CulinaryFeature, AmenitiesGrid, CommunityGallery, TourCTA, FAQAccordion). Use findDocuments to read a page by id or slug (it returns the full `layout` JSON), reorder/edit the `layout.content` array (each item has a `type` and `props`), then updateDocument to push the whole `layout` object back. Reordering array elements changes block order; refreshing /edit/{slug} reflects the change.',
           // Allow reading, creating and editing pages. Deletion stays disabled so the
           // protected home page (slug "home") can never be removed via MCP.
           enabled: {

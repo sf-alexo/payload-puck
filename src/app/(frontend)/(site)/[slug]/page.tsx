@@ -60,6 +60,7 @@ async function resolveMediaUrls(data: PuckData, payload: any): Promise<PuckData>
     where: {
       id: { in: Array.from(mediaIds) },
     },
+    limit: mediaIds.size,
   })
 
   console.log('Fetched media items:', mediaItems)
