@@ -11,7 +11,7 @@ const linkListFields: Field[] = [
     type: 'text',
     required: true,
     admin: {
-      description: 'Absolute or relative URL, e.g. /case-studies or https://example.com',
+      description: 'Absolute or relative URL, e.g. /floorplans or https://example.com',
     },
   },
 ]

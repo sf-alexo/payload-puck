@@ -27,7 +27,7 @@ const linkFields: Field[] = [
     name: 'url',
     type: 'text',
     admin: {
-      description: 'Absolute or relative URL, e.g. /case-studies or https://example.com',
+      description: 'Absolute or relative URL, e.g. /floorplans or https://example.com',
       condition: (_data, siblingData) => siblingData?.type === 'custom',
     },
   },

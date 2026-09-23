@@ -10,11 +10,10 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
-import { CaseStudies } from './collections/CaseStudies'
-import { Testimonials } from './collections/Testimonials'
-import { ProjectTypes } from './collections/ProjectTypes'
-import { Industries } from './collections/Industries'
-import { Techstacks } from './collections/Techstacks'
+import { Communities } from './collections/Communities'
+import { FloorPlans } from './collections/FloorPlans'
+import { Amenities } from './collections/Amenities'
+import { Events } from './collections/Events'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 import { revelEagleLayout } from './puck/revelEagleLayout'
@@ -37,11 +36,10 @@ export default buildConfig({
     Users,
     Media,
     Pages,
-    CaseStudies,
-    Testimonials,
-    ProjectTypes,
-    Industries,
-    Techstacks,
+    Communities,
+    FloorPlans,
+    Amenities,
+    Events,
   ],
   globals: [Header, Footer],
   onInit: async (payload) => {
@@ -164,234 +162,105 @@ export default buildConfig({
       payload.logger.warn({ err: error }, 'Skipping header/footer global seeding')
     }
 
-    // Seed Industries if empty
-    const industries = await payload.find({
-      collection: 'industries',
-      limit: 1,
-    })
-    if (industries.docs.length === 0) {
-      const industryNames = [
-        'Arts & Crafts',
-        'Automotive',
-        'Construction',
-        'Consulting',
-        'Design & Architecture',
-        'Education',
-        'Financial Services',
-        'Food & Restaurants',
-        'Government & Public Sector',
-        'Healthcare & Pharmaceuticals',
-        'Information Technology & Services',
-        'Insurance',
-        'Manufacturing',
-        'Marketing & Communications',
-        'Media & Entertainment',
-        'Non-profit & NGOs',
-        'Real Estate',
-        'Retail & E-commerce',
-        'Sports',
-        'Staffing & Recruiting',
-        'Technology & Software Development',
-        'Telecommunications',
-        'Training & Coaching',
-        'Transportation & Logistics',
-        'Travel & Hospitality',
-      ]
-
-      for (const name of industryNames) {
-        await payload.create({
-          collection: 'industries',
-          data: { name },
+    // Seed Community collections (Communities/FloorPlans/Amenities/Events).
+    // Wrapped in try/catch — a DB that hasn't run the latest migration yet
+    // shouldn't stop boot.
+    try {
+      const communities = await payload.find({ collection: 'communities', limit: 1 })
+      if (communities.docs.length === 0) {
+        const revelEagleCommunity = await payload.create({
+          collection: 'communities',
+          data: {
+            name: 'Revel Eagle',
+            slug: 'revel-eagle',
+            city: 'Eagle',
+            state: 'ID',
+            address: '745 E Riverside Dr\nEagle, ID 83616',
+            phone: '(208) 486-0733',
+            websiteUrl: 'https://revelcommunities.com/revel-eagle/',
+            description:
+              'Independent senior living community in Eagle, Idaho offering apartment homes, resort-style amenities, chef-prepared dining, and an active social lifestyle.',
+            image: await ensureMedia('hero-revel-eagle-0523-1-1024x683.jpg', 'Revel Eagle'),
+          },
         })
+
+        for (const community of [
+          { name: 'Revel Province', slug: 'revel-province', city: 'Colorado Springs', state: 'CO' },
+          { name: 'Revel Rancharrah', slug: 'revel-rancharrah', city: 'Reno', state: 'NV' },
+          { name: 'Revel Folsom', slug: 'revel-folsom', city: 'Folsom', state: 'CA' },
+          { name: 'Revel Issaquah', slug: 'revel-issaquah', city: 'Issaquah', state: 'WA' },
+          { name: 'Revel Lodi', slug: 'revel-lodi', city: 'Lodi', state: 'CA' },
+        ]) {
+          await payload.create({ collection: 'communities', data: community })
+        }
+
+        const floorplans = await payload.find({ collection: 'floorplans', limit: 1 })
+        if (floorplans.docs.length === 0) {
+          for (const plan of [
+            { name: 'Studio A', bedrooms: 'studio', bathrooms: '1', sqft: 558, price: 3275 },
+            { name: 'One Bedroom B', bedrooms: '1', bathrooms: '1', sqft: 712, price: 3955 },
+            { name: 'One Bedroom C', bedrooms: '1', bathrooms: '1', sqft: 825, price: 4195 },
+            { name: 'Two Bedroom D', bedrooms: '2', bathrooms: '2', sqft: 1104, price: 4895 },
+          ] as const) {
+            await payload.create({
+              collection: 'floorplans',
+              data: { ...plan, community: revelEagleCommunity.id },
+            })
+          }
+        }
+
+        const amenities = await payload.find({ collection: 'amenities', limit: 1 })
+        if (amenities.docs.length === 0) {
+          for (const amenity of [
+            { name: 'The Salon', image: 'revel-eagle-salon-1024x683.jpg' },
+            { name: 'Theater', image: 'revel-eagle-theater-room-1024x683.jpg' },
+            { name: 'Fitness Studio', image: 'revel-eagle-fitness-studio-1-1024x673.jpg' },
+            { name: 'The Spa', image: 'revel-eagle-spa-1024x683.jpg' },
+            { name: 'Revel Room', image: 'revel-eagle-revel-room-1-1024x640.jpg' },
+            { name: 'Pickleball Court', image: 'revel-eagle-pickleball-court-1-1024x683.jpg' },
+          ]) {
+            await payload.create({
+              collection: 'amenities',
+              data: {
+                name: amenity.name,
+                community: revelEagleCommunity.id,
+                image: await ensureMedia(amenity.image, amenity.name),
+              },
+            })
+          }
+        }
+
+        const events = await payload.find({ collection: 'events', limit: 1 })
+        if (events.docs.length === 0) {
+          for (const event of [
+            {
+              title: 'The White Queen - TV Series',
+              start: '2026-09-22T18:30:00.000Z',
+              end: '2026-09-22T19:30:00.000Z',
+              location: 'Revel Eagle',
+            },
+            {
+              title: 'Outing: To Bruneau Sand Dunes & Lunch',
+              start: '2026-09-23T09:00:00.000Z',
+              end: '2026-09-23T17:00:00.000Z',
+              location: 'Bruneau Sand Dunes',
+            },
+            {
+              title: 'Resident Monthly Movie: The Devil Wears Prada 2',
+              start: '2026-09-23T11:30:00.000Z',
+              end: '2026-09-23T13:00:00.000Z',
+              location: 'Revel Eagle Theater',
+            },
+          ]) {
+            await payload.create({
+              collection: 'events',
+              data: { ...event, community: revelEagleCommunity.id },
+            })
+          }
+        }
       }
-    }
-
-    // Seed ProjectTypes if empty
-    const projectTypes = await payload.find({
-      collection: 'project-types',
-      limit: 1,
-    })
-    if (projectTypes.docs.length === 0) {
-      const projectTypeNames = [
-        'AI/ML Solutions',
-        'Automation',
-        'Cloud Solutions',
-        'CMS Development & Migration',
-        'DevOps & Infrastructure',
-        'Healthcare & Pharmaceuticals',
-        'Landing Pages & Websites',
-        'Maintenance & Support',
-        'Mobile Applications',
-        'PoC & MVP Development',
-        'Product Enhancement',
-        'Solution Architecture',
-        'Staff Augmentation',
-        'Web Applications',
-      ]
-
-      for (const name of projectTypeNames) {
-        await payload.create({
-          collection: 'project-types',
-          data: { name },
-        })
-      }
-    }
-
-    // Seed Techstacks if empty
-    const techstacks = await payload.find({
-      collection: 'techstacks',
-      limit: 1,
-    })
-    if (techstacks.docs.length === 0) {
-      const techstackNames = [
-        'Active Admin',
-        'Agora',
-        'Algolia',
-        'Angular',
-        'Apache Airflow',
-        'ApostropheCMS',
-        'ASP.NET',
-        'AWS',
-        'AWS CloudFront',
-        'AWS CloudWatch',
-        'AWS EC2',
-        'AWS ECS',
-        'AWS IAM',
-        'AWS Lambda',
-        'AWS RDS',
-        'AWS S3',
-        'AWS WAF',
-        'Azure',
-        'Babel',
-        'BigCommerce',
-        'Bootstrap',
-        'Boto3',
-        'C Sharp',
-        'C Plus Plus',
-        'CakePHP',
-        'Carrierwave',
-        'Cascade CMS',
-        'Claude API',
-        'Claude Projects',
-        'ColdFusion',
-        'Context isolation',
-        'Cordova',
-        'Craft CMS',
-        'CSS',
-        'cURL',
-        'Custom Twitter Stream Integration',
-        'D3',
-        'Devise',
-        'DigitalOcean',
-        'Django',
-        'Docker',
-        'Drupal',
-        'Elasticsearch',
-        'Express.js',
-        'FastAPI',
-        'Flask',
-        'Flutter',
-        'Gemini',
-        'Git',
-        'GitHub',
-        'GitLab',
-        'Go',
-        'Google Analytics',
-        'Google Maps API',
-        'Google Workspace',
-        'Grafana',
-        'GraphQL',
-        'Heroku',
-        'HighCharts',
-        'HTML',
-        'HubSpot API',
-        'Image Optimization Tools',
-        'Ionic',
-        'Java',
-        'JavaScript',
-        'jQuery',
-        'Kafka',
-        'Keras',
-        'Koa',
-        'Laravel',
-        'Leaflet',
-        'less',
-        'LookerStudio',
-        'Magento',
-        'Mapbox',
-        'MariaDB',
-        'MediaWiki',
-        'Microsoft Office Add-ins Development Kit',
-        'MongoDB',
-        'MySQL',
-        'N8N',
-        'Netlify',
-        'NewRelic',
-        'Next.JS',
-        'Nginx',
-        'Nib',
-        'NodeJS',
-        'Objective-c',
-        'OpenAI GPT',
-        'OpenSearch',
-        'OpenTok',
-        'Pantheon',
-        'Papertrail',
-        'PayPal',
-        'PHP',
-        'Pinecone',
-        'Plaid API',
-        'PostgreSQL',
-        'Prometheus',
-        'Python',
-        'PyTorch',
-        'RabbitMQ',
-        'RAG',
-        'React',
-        'React Native',
-        'Redis',
-        'Redux',
-        'RSpec',
-        'RSS',
-        'Ruby',
-        'Ruby on Rails',
-        'Salesforce DX',
-        'Sass',
-        'Sembly AI',
-        'Shopify',
-        'Solr',
-        'Spring Boot',
-        'Stripe',
-        'Tailwind',
-        'Tealium AudienceStream',
-        'Tealium EventStream',
-        'Tealium IQ',
-        'TensorFlow',
-        'Terraform',
-        'TL;DV',
-        'Twig',
-        'Twilio',
-        'TypeScript',
-        'VEEVA',
-        'Vue',
-        'Webpack',
-        'WebRTC',
-        'WebSockets',
-        'Woocommerce',
-        'WordPress',
-        'XML-structured system prompt',
-        'Yii',
-        'Zabbix',
-      ]
-
-      await Promise.all(
-        techstackNames.map(async (name) => {
-          await payload.create({
-            collection: 'techstacks',
-            data: { name },
-          })
-        })
-      )
+    } catch (error) {
+      payload.logger.warn({ err: error }, 'Skipping community collections seeding')
     }
   },
   editor: lexicalEditor(),
@@ -431,19 +300,16 @@ export default buildConfig({
         media: {
           enabled: { create: true, delete: true, find: true, update: true },
         },
-        'case-studies': {
+        communities: {
           enabled: { create: true, delete: true, find: true, update: true },
         },
-        testimonials: {
+        floorplans: {
           enabled: { create: true, delete: true, find: true, update: true },
         },
-        'project-types': {
+        amenities: {
           enabled: { create: true, delete: true, find: true, update: true },
         },
-        industries: {
-          enabled: { create: true, delete: true, find: true, update: true },
-        },
-        techstacks: {
+        events: {
           enabled: { create: true, delete: true, find: true, update: true },
         },
         users: {

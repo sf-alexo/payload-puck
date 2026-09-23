@@ -71,11 +71,10 @@ export interface Config {
     users: User;
     media: Media;
     pages: Page;
-    'case-studies': CaseStudy;
-    testimonials: Testimonial;
-    'project-types': ProjectType;
-    industries: Industry;
-    techstacks: Techstack;
+    communities: Community;
+    floorplans: Floorplan;
+    amenities: Amenity;
+    events: Event;
     'payload-mcp-api-keys': PayloadMcpApiKey;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -87,11 +86,10 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
-    'case-studies': CaseStudiesSelect<false> | CaseStudiesSelect<true>;
-    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
-    'project-types': ProjectTypesSelect<false> | ProjectTypesSelect<true>;
-    industries: IndustriesSelect<false> | IndustriesSelect<true>;
-    techstacks: TechstacksSelect<false> | TechstacksSelect<true>;
+    communities: CommunitiesSelect<false> | CommunitiesSelect<true>;
+    floorplans: FloorplansSelect<false> | FloorplansSelect<true>;
+    amenities: AmenitiesSelect<false> | AmenitiesSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
     'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -237,80 +235,68 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "case-studies".
+ * via the `definition` "communities".
  */
-export interface CaseStudy {
+export interface Community {
+  id: number;
+  name: string;
+  slug: string;
+  city?: string | null;
+  state?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  /**
+   * Community site URL
+   */
+  websiteUrl?: string | null;
+  description?: string | null;
+  image?: (number | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "floorplans".
+ */
+export interface Floorplan {
+  id: number;
+  name: string;
+  community?: (number | null) | Community;
+  bedrooms?: ('studio' | '1' | '2' | '3') | null;
+  bathrooms?: ('1' | '1.5' | '2' | '2.5' | '3') | null;
+  sqft?: number | null;
+  price?: number | null;
+  available?: boolean | null;
+  image?: (number | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "amenities".
+ */
+export interface Amenity {
+  id: number;
+  name: string;
+  community?: (number | null) | Community;
+  description?: string | null;
+  image?: (number | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
   id: number;
   title: string;
-  slug: string;
-  portfolioTitle?: string | null;
-  descriptor?: string | null;
-  summary?: string | null;
-  /**
-   * Client website URL
-   */
-  clientWebsite?: string | null;
-  /**
-   * Link to production/live site
-   */
-  linkToProd?: string | null;
-  /**
-   * Full story/case study URL
-   */
-  fullStoryUrl?: string | null;
-  projectTypes?: (number | ProjectType)[] | null;
-  industries?: (number | Industry)[] | null;
-  techstacks?: (number | Techstack)[] | null;
-  coverImage?: (number | null) | Media;
-  testimonials?: (number | Testimonial)[] | null;
-  objective?: string | null;
-  challenge?: string | null;
-  solution?: string | null;
-  result?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "project-types".
- */
-export interface ProjectType {
-  id: number;
-  name: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "industries".
- */
-export interface Industry {
-  id: number;
-  name: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "techstacks".
- */
-export interface Techstack {
-  id: number;
-  name: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "testimonials".
- */
-export interface Testimonial {
-  id: number;
-  quote: string;
-  author: string;
-  role?: string | null;
-  company?: string | null;
-  avatar?: (number | null) | Media;
+  community?: (number | null) | Community;
+  start: string;
+  end?: string | null;
+  location?: string | null;
+  description?: string | null;
+  image?: (number | null) | Media;
   updatedAt: string;
   createdAt: string;
 }
@@ -366,93 +352,75 @@ export interface PayloadMcpApiKey {
      */
     delete?: boolean | null;
   };
-  caseStudies?: {
+  communities?: {
     /**
-     * Allow clients to find case-studies.
+     * Allow clients to find communities.
      */
     find?: boolean | null;
     /**
-     * Allow clients to create case-studies.
+     * Allow clients to create communities.
      */
     create?: boolean | null;
     /**
-     * Allow clients to update case-studies.
+     * Allow clients to update communities.
      */
     update?: boolean | null;
     /**
-     * Allow clients to delete case-studies.
+     * Allow clients to delete communities.
      */
     delete?: boolean | null;
   };
-  testimonials?: {
+  floorplans?: {
     /**
-     * Allow clients to find testimonials.
+     * Allow clients to find floorplans.
      */
     find?: boolean | null;
     /**
-     * Allow clients to create testimonials.
+     * Allow clients to create floorplans.
      */
     create?: boolean | null;
     /**
-     * Allow clients to update testimonials.
+     * Allow clients to update floorplans.
      */
     update?: boolean | null;
     /**
-     * Allow clients to delete testimonials.
+     * Allow clients to delete floorplans.
      */
     delete?: boolean | null;
   };
-  projectTypes?: {
+  amenities?: {
     /**
-     * Allow clients to find project-types.
+     * Allow clients to find amenities.
      */
     find?: boolean | null;
     /**
-     * Allow clients to create project-types.
+     * Allow clients to create amenities.
      */
     create?: boolean | null;
     /**
-     * Allow clients to update project-types.
+     * Allow clients to update amenities.
      */
     update?: boolean | null;
     /**
-     * Allow clients to delete project-types.
+     * Allow clients to delete amenities.
      */
     delete?: boolean | null;
   };
-  industries?: {
+  events?: {
     /**
-     * Allow clients to find industries.
+     * Allow clients to find events.
      */
     find?: boolean | null;
     /**
-     * Allow clients to create industries.
+     * Allow clients to create events.
      */
     create?: boolean | null;
     /**
-     * Allow clients to update industries.
+     * Allow clients to update events.
      */
     update?: boolean | null;
     /**
-     * Allow clients to delete industries.
-     */
-    delete?: boolean | null;
-  };
-  techstacks?: {
-    /**
-     * Allow clients to find techstacks.
-     */
-    find?: boolean | null;
-    /**
-     * Allow clients to create techstacks.
-     */
-    create?: boolean | null;
-    /**
-     * Allow clients to update techstacks.
-     */
-    update?: boolean | null;
-    /**
-     * Allow clients to delete techstacks.
+     * Allow clients to delete events.
      */
     delete?: boolean | null;
   };
@@ -518,24 +486,20 @@ export interface PayloadLockedDocument {
         value: number | Page;
       } | null)
     | ({
-        relationTo: 'case-studies';
-        value: number | CaseStudy;
+        relationTo: 'communities';
+        value: number | Community;
       } | null)
     | ({
-        relationTo: 'testimonials';
-        value: number | Testimonial;
+        relationTo: 'floorplans';
+        value: number | Floorplan;
       } | null)
     | ({
-        relationTo: 'project-types';
-        value: number | ProjectType;
+        relationTo: 'amenities';
+        value: number | Amenity;
       } | null)
     | ({
-        relationTo: 'industries';
-        value: number | Industry;
-      } | null)
-    | ({
-        relationTo: 'techstacks';
-        value: number | Techstack;
+        relationTo: 'events';
+        value: number | Event;
       } | null)
     | ({
         relationTo: 'payload-mcp-api-keys';
@@ -649,66 +613,61 @@ export interface PagesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "case-studies_select".
+ * via the `definition` "communities_select".
  */
-export interface CaseStudiesSelect<T extends boolean = true> {
-  title?: T;
+export interface CommunitiesSelect<T extends boolean = true> {
+  name?: T;
   slug?: T;
-  portfolioTitle?: T;
-  descriptor?: T;
-  summary?: T;
-  clientWebsite?: T;
-  linkToProd?: T;
-  fullStoryUrl?: T;
-  projectTypes?: T;
-  industries?: T;
-  techstacks?: T;
-  coverImage?: T;
-  testimonials?: T;
-  objective?: T;
-  challenge?: T;
-  solution?: T;
-  result?: T;
+  city?: T;
+  state?: T;
+  address?: T;
+  phone?: T;
+  websiteUrl?: T;
+  description?: T;
+  image?: T;
   updatedAt?: T;
   createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "testimonials_select".
+ * via the `definition` "floorplans_select".
  */
-export interface TestimonialsSelect<T extends boolean = true> {
-  quote?: T;
-  author?: T;
-  role?: T;
-  company?: T;
-  avatar?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "project-types_select".
- */
-export interface ProjectTypesSelect<T extends boolean = true> {
+export interface FloorplansSelect<T extends boolean = true> {
   name?: T;
+  community?: T;
+  bedrooms?: T;
+  bathrooms?: T;
+  sqft?: T;
+  price?: T;
+  available?: T;
+  image?: T;
   updatedAt?: T;
   createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "industries_select".
+ * via the `definition` "amenities_select".
  */
-export interface IndustriesSelect<T extends boolean = true> {
+export interface AmenitiesSelect<T extends boolean = true> {
   name?: T;
+  community?: T;
+  description?: T;
+  image?: T;
   updatedAt?: T;
   createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "techstacks_select".
+ * via the `definition` "events_select".
  */
-export interface TechstacksSelect<T extends boolean = true> {
-  name?: T;
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  community?: T;
+  start?: T;
+  end?: T;
+  location?: T;
+  description?: T;
+  image?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -735,7 +694,7 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         update?: T;
         delete?: T;
       };
-  caseStudies?:
+  communities?:
     | T
     | {
         find?: T;
@@ -743,7 +702,7 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         update?: T;
         delete?: T;
       };
-  testimonials?:
+  floorplans?:
     | T
     | {
         find?: T;
@@ -751,7 +710,7 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         update?: T;
         delete?: T;
       };
-  projectTypes?:
+  amenities?:
     | T
     | {
         find?: T;
@@ -759,15 +718,7 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         update?: T;
         delete?: T;
       };
-  industries?:
-    | T
-    | {
-        find?: T;
-        create?: T;
-        update?: T;
-        delete?: T;
-      };
-  techstacks?:
+  events?:
     | T
     | {
         find?: T;
@@ -851,7 +802,7 @@ export interface Header {
         label: string;
         page?: (number | null) | Page;
         /**
-         * Absolute or relative URL, e.g. /case-studies or https://example.com
+         * Absolute or relative URL, e.g. /floorplans or https://example.com
          */
         url?: string | null;
         /**
@@ -863,7 +814,7 @@ export interface Header {
               label: string;
               page?: (number | null) | Page;
               /**
-               * Absolute or relative URL, e.g. /case-studies or https://example.com
+               * Absolute or relative URL, e.g. /floorplans or https://example.com
                */
               url?: string | null;
               id?: string | null;
@@ -887,7 +838,7 @@ export interface Header {
         label: string;
         page?: (number | null) | Page;
         /**
-         * Absolute or relative URL, e.g. /case-studies or https://example.com
+         * Absolute or relative URL, e.g. /floorplans or https://example.com
          */
         url?: string | null;
         id?: string | null;
@@ -931,7 +882,7 @@ export interface Footer {
     | {
         label: string;
         /**
-         * Absolute or relative URL, e.g. /case-studies or https://example.com
+         * Absolute or relative URL, e.g. /floorplans or https://example.com
          */
         url: string;
         id?: string | null;
@@ -944,7 +895,7 @@ export interface Footer {
     | {
         label: string;
         /**
-         * Absolute or relative URL, e.g. /case-studies or https://example.com
+         * Absolute or relative URL, e.g. /floorplans or https://example.com
          */
         url: string;
         id?: string | null;
