@@ -102,60 +102,66 @@ export default buildConfig({
       }
     }
 
-    // Seed Header global with the Revel Eagle navigation if it has no items yet.
-    const headerGlobal = await payload.findGlobal({ slug: 'header' })
-    if (!headerGlobal.navItems?.length) {
-      const logoId = await ensureMedia('revel-eagle-logo-white.png', 'Revel Eagle logo (white)')
-      const logoSolidId = await ensureMedia('revel-eagle-logo.png', 'Revel Eagle logo')
-      await payload.updateGlobal({
-        slug: 'header',
-        data: {
-          logo: logoId,
-          logoSolid: logoSolidId,
-          navItems: HEADER_DEFAULTS.navItems.map((item) => ({
-            type: 'custom' as const,
-            label: item.label,
-            url: item.url,
-            children: (item.children ?? []).map((child) => ({
+    // Seed Header/Footer globals with the Revel Eagle content if empty. Never
+    // throws — a DB that hasn't run the latest migration yet shouldn't stop boot.
+    try {
+      // Seed Header global with the Revel Eagle navigation if it has no items yet.
+      const headerGlobal = await payload.findGlobal({ slug: 'header' })
+      if (!headerGlobal.navItems?.length) {
+        const logoId = await ensureMedia('revel-eagle-logo-white.png', 'Revel Eagle logo (white)')
+        const logoSolidId = await ensureMedia('revel-eagle-logo.png', 'Revel Eagle logo')
+        await payload.updateGlobal({
+          slug: 'header',
+          data: {
+            logo: logoId,
+            logoSolid: logoSolidId,
+            navItems: HEADER_DEFAULTS.navItems.map((item) => ({
               type: 'custom' as const,
-              label: child.label,
-              url: child.url,
+              label: item.label,
+              url: item.url,
+              children: (item.children ?? []).map((child) => ({
+                type: 'custom' as const,
+                label: child.label,
+                url: child.url,
+              })),
             })),
-          })),
-          phone: HEADER_DEFAULTS.phone,
-          ctaLabel: HEADER_DEFAULTS.ctaLabel,
-          ctaUrl: HEADER_DEFAULTS.ctaUrl,
-          mobileNavItems: HEADER_DEFAULTS.mobileNavItems.map((item) => ({
-            type: 'custom' as const,
-            label: item.label,
-            url: item.url,
-          })),
-        },
-      })
-    }
+            phone: HEADER_DEFAULTS.phone,
+            ctaLabel: HEADER_DEFAULTS.ctaLabel,
+            ctaUrl: HEADER_DEFAULTS.ctaUrl,
+            mobileNavItems: HEADER_DEFAULTS.mobileNavItems.map((item) => ({
+              type: 'custom' as const,
+              label: item.label,
+              url: item.url,
+            })),
+          },
+        })
+      }
 
-    // Seed Footer global with the Revel Eagle footer content if empty.
-    const footerGlobal = await payload.findGlobal({ slug: 'footer' })
-    if (!footerGlobal.address && !footerGlobal.communityLinks?.length) {
-      const footerLogoId = await ensureMedia('revel-logo-white.png', 'Revel logo')
-      await payload.updateGlobal({
-        slug: 'footer',
-        data: {
-          logo: footerLogoId,
-          logoUrl: FOOTER_DEFAULTS.logoUrl,
-          address: FOOTER_DEFAULTS.address,
-          phone: FOOTER_DEFAULTS.phone,
-          socialLinks: FOOTER_DEFAULTS.socialLinks.map((link) => ({
-            platform: link.platform as 'facebook' | 'instagram' | 'x' | 'linkedin' | 'youtube',
-            url: link.url,
-          })),
-          communityLinks: FOOTER_DEFAULTS.communityLinks,
-          policyLinks: FOOTER_DEFAULTS.policyLinks,
-          privacyText: FOOTER_DEFAULTS.privacyText,
-          privacyLinkLabel: FOOTER_DEFAULTS.privacyLinkLabel,
-          privacyLinkUrl: FOOTER_DEFAULTS.privacyLinkUrl,
-        },
-      })
+      // Seed Footer global with the Revel Eagle footer content if empty.
+      const footerGlobal = await payload.findGlobal({ slug: 'footer' })
+      if (!footerGlobal.address && !footerGlobal.communityLinks?.length) {
+        const footerLogoId = await ensureMedia('revel-logo-white.png', 'Revel logo')
+        await payload.updateGlobal({
+          slug: 'footer',
+          data: {
+            logo: footerLogoId,
+            logoUrl: FOOTER_DEFAULTS.logoUrl,
+            address: FOOTER_DEFAULTS.address,
+            phone: FOOTER_DEFAULTS.phone,
+            socialLinks: FOOTER_DEFAULTS.socialLinks.map((link) => ({
+              platform: link.platform as 'facebook' | 'instagram' | 'x' | 'linkedin' | 'youtube',
+              url: link.url,
+            })),
+            communityLinks: FOOTER_DEFAULTS.communityLinks,
+            policyLinks: FOOTER_DEFAULTS.policyLinks,
+            privacyText: FOOTER_DEFAULTS.privacyText,
+            privacyLinkLabel: FOOTER_DEFAULTS.privacyLinkLabel,
+            privacyLinkUrl: FOOTER_DEFAULTS.privacyLinkUrl,
+          },
+        })
+      }
+    } catch (error) {
+      payload.logger.warn({ err: error }, 'Skipping header/footer global seeding')
     }
 
     // Seed Industries if empty
