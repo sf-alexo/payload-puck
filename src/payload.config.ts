@@ -18,6 +18,7 @@ import { Techstacks } from './collections/Techstacks'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 import { revelEagleLayout } from './puck/revelEagleLayout'
+import { FOOTER_DEFAULTS, HEADER_DEFAULTS } from './components/siteChromeDefaults'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -75,6 +76,84 @@ export default buildConfig({
           slug: 'revel-eagle',
           status: 'published',
           layout: revelEagleLayout,
+        },
+      })
+    }
+
+    // Upload a file from public/ into the media collection once. Never throws:
+    // on serverless the public dir may not exist in the function bundle, and
+    // the header/footer fall back to the public asset paths anyway.
+    const ensureMedia = async (filename: string, alt: string) => {
+      try {
+        const found = await payload.find({
+          collection: 'media',
+          where: { filename: { equals: filename } },
+          limit: 1,
+        })
+        if (found.docs[0]) return found.docs[0].id
+        const created = await payload.create({
+          collection: 'media',
+          data: { alt },
+          filePath: path.resolve(dirname, '../public', filename),
+        })
+        return created.id
+      } catch {
+        return undefined
+      }
+    }
+
+    // Seed Header global with the Revel Eagle navigation if it has no items yet.
+    const headerGlobal = await payload.findGlobal({ slug: 'header' })
+    if (!headerGlobal.navItems?.length) {
+      const logoId = await ensureMedia('revel-eagle-logo-white.png', 'Revel Eagle logo (white)')
+      const logoSolidId = await ensureMedia('revel-eagle-logo.png', 'Revel Eagle logo')
+      await payload.updateGlobal({
+        slug: 'header',
+        data: {
+          logo: logoId,
+          logoSolid: logoSolidId,
+          navItems: HEADER_DEFAULTS.navItems.map((item) => ({
+            type: 'custom' as const,
+            label: item.label,
+            url: item.url,
+            children: (item.children ?? []).map((child) => ({
+              type: 'custom' as const,
+              label: child.label,
+              url: child.url,
+            })),
+          })),
+          phone: HEADER_DEFAULTS.phone,
+          ctaLabel: HEADER_DEFAULTS.ctaLabel,
+          ctaUrl: HEADER_DEFAULTS.ctaUrl,
+          mobileNavItems: HEADER_DEFAULTS.mobileNavItems.map((item) => ({
+            type: 'custom' as const,
+            label: item.label,
+            url: item.url,
+          })),
+        },
+      })
+    }
+
+    // Seed Footer global with the Revel Eagle footer content if empty.
+    const footerGlobal = await payload.findGlobal({ slug: 'footer' })
+    if (!footerGlobal.address && !footerGlobal.communityLinks?.length) {
+      const footerLogoId = await ensureMedia('revel-logo-white.png', 'Revel logo')
+      await payload.updateGlobal({
+        slug: 'footer',
+        data: {
+          logo: footerLogoId,
+          logoUrl: FOOTER_DEFAULTS.logoUrl,
+          address: FOOTER_DEFAULTS.address,
+          phone: FOOTER_DEFAULTS.phone,
+          socialLinks: FOOTER_DEFAULTS.socialLinks.map((link) => ({
+            platform: link.platform as 'facebook' | 'instagram' | 'x' | 'linkedin' | 'youtube',
+            url: link.url,
+          })),
+          communityLinks: FOOTER_DEFAULTS.communityLinks,
+          policyLinks: FOOTER_DEFAULTS.policyLinks,
+          privacyText: FOOTER_DEFAULTS.privacyText,
+          privacyLinkLabel: FOOTER_DEFAULTS.privacyLinkLabel,
+          privacyLinkUrl: FOOTER_DEFAULTS.privacyLinkUrl,
         },
       })
     }

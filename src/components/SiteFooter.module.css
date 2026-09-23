@@ -1,0 +1,215 @@
+.footer {
+  background: #1c4b54;
+  color: #fff;
+  font-family: 'futura-pt', Futura, 'Trebuchet MS', sans-serif;
+  padding: 50px 24px 30px;
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.col {
+  min-width: 0;
+}
+
+.logoLink {
+  display: inline-block;
+}
+
+.logo {
+  width: 170px;
+  height: auto;
+  display: block;
+}
+
+.address {
+  margin-top: 10px;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.address p {
+  margin: 0 0 12px;
+}
+
+.phone {
+  color: #fff;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.phone:hover {
+  color: #b2a283;
+}
+
+.heading {
+  margin: 0 0 14px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.socialIcons {
+  display: flex;
+  gap: 5px;
+}
+
+.socialIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.socialIcon svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.facebook {
+  background: #3b5998;
+}
+
+.instagram {
+  background: #262626;
+}
+
+.socialIcon:hover {
+  opacity: 0.85;
+}
+
+.stateList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stateLink {
+  color: #fff;
+  font-size: 17px;
+  line-height: 23px;
+  letter-spacing: 0.2px;
+  text-decoration: none;
+}
+
+.stateLink:hover,
+.stateLink:focus-visible {
+  color: #b2a283;
+}
+
+.policyRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.policyRow img {
+  flex: 0 0 auto;
+  display: block;
+}
+
+.policyList {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.policyList li + li {
+  margin-top: 4px;
+}
+
+.policyLink {
+  color: #fff;
+  font-size: 14px;
+  text-transform: capitalize;
+  text-decoration: underline;
+}
+
+.policyLink:hover,
+.policyLink:focus-visible {
+  color: #b2a283;
+}
+
+.privacyChoices {
+  margin-top: 14px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.privacyText {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: capitalize;
+}
+
+.ccpaIcon {
+  display: inline-block;
+}
+
+.privacyLink {
+  color: #fff;
+  text-transform: capitalize;
+}
+
+.privacyLink:hover,
+.privacyLink:focus-visible {
+  color: #b2a283;
+}
+
+.extraContent {
+  max-width: 1200px;
+  margin: 32px auto 0;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 14px;
+}
+
+.extraContent a {
+  color: #b2a283;
+}
+
+@media (max-width: 900px) {
+  .inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    text-align: center;
+  }
+
+  .logo {
+    margin: 0 auto;
+  }
+
+  .socialIcons,
+  .stateList {
+    justify-content: center;
+  }
+
+  .policyRow {
+    justify-content: center;
+    align-items: center;
+  }
+
+  .policyList {
+    text-align: left;
+  }
+
+  .privacyText {
+    justify-content: center;
+  }
+}

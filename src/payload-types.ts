@@ -837,7 +837,51 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: number;
+  /**
+   * Logo shown on the transparent header and mobile bar. Falls back to the white Revel Eagle logo.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Logo shown once the header has a white background. Falls back to the colored Revel Eagle logo.
+   */
+  logoSolid?: (number | null) | Media;
   navItems?:
+    | {
+        type?: ('page' | 'custom') | null;
+        label: string;
+        page?: (number | null) | Page;
+        /**
+         * Absolute or relative URL, e.g. /case-studies or https://example.com
+         */
+        url?: string | null;
+        /**
+         * Optional dropdown shown under this item (e.g. EXPERIENCE).
+         */
+        children?:
+          | {
+              type?: ('page' | 'custom') | null;
+              label: string;
+              page?: (number | null) | Page;
+              /**
+               * Absolute or relative URL, e.g. /case-studies or https://example.com
+               */
+              url?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Shown as a call link in the header, e.g. (208) 486-0733
+   */
+  phone?: string | null;
+  ctaLabel?: string | null;
+  ctaUrl?: string | null;
+  /**
+   * Extra links appended to the mobile menu (Residents, Apply, Careers, …).
+   */
+  mobileNavItems?:
     | {
         type?: ('page' | 'custom') | null;
         label: string;
@@ -853,13 +897,65 @@ export interface Header {
   createdAt?: string | null;
 }
 /**
- * Site footer rich text. Shown on all public pages.
+ * Site footer content. Shown on all public pages.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "footer".
  */
 export interface Footer {
   id: number;
+  /**
+   * Logo shown in the first column. Falls back to the white Revel logo.
+   */
+  logo?: (number | null) | Media;
+  logoUrl?: string | null;
+  /**
+   * One line per address row, e.g. "745 E Riverside Dr" then "Eagle, ID 83616".
+   */
+  address?: string | null;
+  /**
+   * Shown as a call link, e.g. (208) 486-0733
+   */
+  phone?: string | null;
+  socialLinks?:
+    | {
+        platform: 'facebook' | 'instagram' | 'x' | 'linkedin' | 'youtube';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Third column links (states / other communities).
+   */
+  communityLinks?:
+    | {
+        label: string;
+        /**
+         * Absolute or relative URL, e.g. /case-studies or https://example.com
+         */
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Fourth column links (Terms & Conditions, Privacy Policy, …).
+   */
+  policyLinks?:
+    | {
+        label: string;
+        /**
+         * Absolute or relative URL, e.g. /case-studies or https://example.com
+         */
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  privacyText?: string | null;
+  privacyLinkLabel?: string | null;
+  privacyLinkUrl?: string | null;
+  /**
+   * Optional rich text rendered below the footer columns.
+   */
   content?: {
     root: {
       type: string;
@@ -883,7 +979,30 @@ export interface Footer {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
+  logo?: T;
+  logoSolid?: T;
   navItems?:
+    | T
+    | {
+        type?: T;
+        label?: T;
+        page?: T;
+        url?: T;
+        children?:
+          | T
+          | {
+              type?: T;
+              label?: T;
+              page?: T;
+              url?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  phone?: T;
+  ctaLabel?: T;
+  ctaUrl?: T;
+  mobileNavItems?:
     | T
     | {
         type?: T;
@@ -901,6 +1020,34 @@ export interface HeaderSelect<T extends boolean = true> {
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
+  logo?: T;
+  logoUrl?: T;
+  address?: T;
+  phone?: T;
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  communityLinks?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  policyLinks?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  privacyText?: T;
+  privacyLinkLabel?: T;
+  privacyLinkUrl?: T;
   content?: T;
   updatedAt?: T;
   createdAt?: T;
